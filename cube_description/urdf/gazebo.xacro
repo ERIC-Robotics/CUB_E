@@ -137,6 +137,7 @@
 
   <gazebo reference="depth_camera_v1_1">
     <sensor name="camera" type="depth">
+      <pose> 0 0 0 0 0 0</pose>
       <visualize>true</visualize>
       <update_rate>60.0</update_rate>
       <camera name="depth_camera_v1_1">
@@ -152,6 +153,11 @@
         </clip>
       </camera>
       <plugin name="depth_camera_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <remapping>/camera/camera_info:=/camera/rgb/camera_info</remapping>
+          <remapping>/camera/image_raw:=/camera/rgb/image_rect_color</remapping>
+          <remapping>/camera/depth/image_raw:=/camera/depth_registered/image_raw</remapping>
+        </ros>
         <baseline>0.2</baseline>
         <alwaysOn>true</alwaysOn>
         <updateRate>0.0</updateRate>
@@ -169,6 +175,30 @@
         <focalLength>0</focalLength>
         <hackBaseline>0</hackBaseline>
       </plugin>
+      <!-- <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
+        <baseline>0.2</baseline>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>camera_ir</cameraName>
+        <imageTopicName>/camera/color/image_raw</imageTopicName>
+        <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
+        <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+        <frameName>camera_link</frameName>
+        <pointCloudCutoff>0.5</pointCloudCutoff>
+        <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+        <distortionK1>0</distortionK1>
+        <distortionK2>0</distortionK2>
+        <distortionK3>0</distortionK3>
+        <distortionT1>0</distortionT1>
+        <distortionT2>0</distortionT2>
+        <CxPrime>0</CxPrime>
+        <Cx>0</Cx>
+        <Cy>0</Cy>
+        <focalLength>0</focalLength>
+        <hackBaseline>0</hackBaseline>
+      </plugin> -->
     </sensor>
   </gazebo>
 

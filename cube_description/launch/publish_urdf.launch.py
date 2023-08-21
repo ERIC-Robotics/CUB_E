@@ -60,6 +60,6 @@ def generate_launch_description():
         [            
             robot_state_publisher_node
             # joint_state_controller_node,
-            # ,rviz_node
+            ,rviz_node
         ]
     )
