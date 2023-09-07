@@ -28,7 +28,6 @@ endif()
 install(
   DIRECTORY
     launch
-    src
   DESTINATION
     share/${PROJECT_NAME}/
 )

@@ -31,7 +31,6 @@ install(
     rviz
     launch
     maps
-    src
     config
     
   DESTINATION
