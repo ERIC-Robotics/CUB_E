@@ -1,3 +1,6 @@
+import os
+from glob import glob
+from setuptools import find_packages
 from setuptools import setup
 
 package_name = 'cube_hardware'
@@ -10,11 +13,13 @@ setup(
     py_modules=[
         srcpath + '.cmdmotor',
         srcpath + '.odometry', 
+        srcpath + '.test',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -27,6 +32,7 @@ setup(
         'console_scripts': [
             'cmdmotor = src.cmdmotor:main',
             'odometry = src.odometry:main',
+            'test = src.test:main',
             'transform = src.transform:main',
         ],
     },

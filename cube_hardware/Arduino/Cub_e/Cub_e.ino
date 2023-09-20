@@ -2,6 +2,7 @@
 #include <std_msgs/Int64.h>
 #include <std_msgs/Float64.h>
 #include <RMCS2303drive.h>
+#include <SwitchMonitor.h>
 
 
 //For Arduino Uno Software serial needs to be used as there is only one hardware serial port and its connected to USB-Serial. 
@@ -22,9 +23,6 @@
 
 ros::NodeHandle nh;
 
-
-RMCS2303 rmcs;
-
 byte slave_id_left=7;
 byte slave_id_right=2;
 int INP_CONTROL_MODE=256;           
@@ -35,9 +33,19 @@ int LPR=2262;
 int acceleration=200;
 int speed=0;
 
+const byte es_button_pin = 2;
+const byte cs_button_pin = 3;
+const int es_sig_pin = 53;
+const int cs_sig_pin = 52;
+
+int es_status = 0;
+int cs_status = 0;
+
 int sp = 5;
 std_msgs::Int64 leftposition;
 std_msgs::Int64 rightposition;
+std_msgs::Int64 es_status_msg;
+std_msgs::Int64 cs_status_msg;
 
 long int Current_position_left;
 long int Current_position_right;
@@ -47,6 +55,13 @@ double previousrightspeed;
 
 ros::Publisher left_motor_pub("/leftmotor/feedback", &leftposition);
 ros::Publisher right_motor_pub("/rightmotor/feedback", &rightposition);
+ros::Publisher es_status_pub("/es_status/hardware", &es_status_msg);
+ros::Publisher cs_status_pub("/cs_status/hardware", &cs_status_msg);
+
+RMCS2303 rmcs;
+
+SwitchMonitor switchMonitor(es_button_pin, cs_button_pin, es_sig_pin, cs_sig_pin);
+
 
 void subscribe_left_command(const std_msgs::Float64& msg){
   if(msg.data > 0){
@@ -97,14 +112,13 @@ void setup() {
   Serial.println("\nRight Done");
   left_init();
   Serial.println("\nLeft Done");
-//  right_init();
-//  Serial.println("\nRight Done");
-
-//  delay(8000);
+  switchMonitor.begin();
+  
   nh.initNode();
   nh.advertise(left_motor_pub);
   nh.advertise(right_motor_pub);
-
+  nh.advertise(es_status_pub);
+  nh.advertise(cs_status_pub);
   
   nh.subscribe(left_motor_sub);
   nh.subscribe(right_motor_sub);
@@ -115,14 +129,22 @@ void loop() {
   // put your main code here, to run repeatedly:
   publish_left_position();
   publish_right_position();
-//  Current_position_left=rmcs.Position_Feedback(slave_id_left); 
-//  Serial.print("l ");
-//  Serial.println(Current_position_left);
-//  Current_position_right=rmcs.Position_Feedback(slave_id_right); 
-//  Serial.print("r ");
-//  Serial.println(Current_position_right);
+  es_statusUpdate_ros();
+  cs_statusUpdate_ros();
   nh.spinOnce();
 
+}
+
+void es_statusUpdate_ros(){
+  switchMonitor.update();
+  es_status_msg.data = switchMonitor.get_es();
+  es_status_pub.publish(&es_status_msg);
+}
+
+void cs_statusUpdate_ros(){
+  switchMonitor.update();
+  cs_status_msg.data = switchMonitor.get_cs();
+  cs_status_pub.publish(&cs_status_msg);
 }
 
 void right_init(){
