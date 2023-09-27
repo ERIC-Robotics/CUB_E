@@ -68,19 +68,23 @@ void subscribe_left_command(const std_msgs::Float64& msg){
     rmcs.Speed(slave_id_left, msg.data); 
     rmcs.Enable_Digital_Mode(slave_id_left,1); 
   }
-  if(msg.data < 0){
+  else if(msg.data < 0){
     rmcs.Speed(slave_id_left, abs(msg.data)); 
     rmcs.Enable_Digital_Mode(slave_id_left,0);
   }
-  if(msg.data == 0){
-    if(previousleftspeed > 0){
-      rmcs.Disable_Digital_Mode(slave_id_left,1);
-    }
-    else if(previousleftspeed < 0){
-      rmcs.Disable_Digital_Mode(slave_id_left,0);
-    }
+  // if(msg.data == 0){
+  //   if(previousleftspeed > 0){
+  //     rmcs.Disable_Digital_Mode(slave_id_left,1);
+  //   }
+  //   else if(previousleftspeed < 0){
+  //     rmcs.Disable_Digital_Mode(slave_id_left,0);
+  //   }
+  // }
+  // previousleftspeed = msg.data;
+  else{
+    rmcs.Disable_Digital_Mode(slave_id_left,0);
+    rmcs.Disable_Digital_Mode(slave_id_left,1);
   }
-  previousleftspeed = msg.data;
 }
 
 void subscribe_right_command(const std_msgs::Float64& msg){
@@ -88,26 +92,40 @@ void subscribe_right_command(const std_msgs::Float64& msg){
     rmcs.Speed(slave_id_right, msg.data); 
     rmcs.Enable_Digital_Mode(slave_id_right,0); 
   }
-  if(msg.data < 0){
+  else if(msg.data < 0){
     rmcs.Speed(slave_id_right, abs(msg.data)); 
     rmcs.Enable_Digital_Mode(slave_id_right,1);
   }
-  if(msg.data == 0){
-    if(previousrightspeed > 0){
-      rmcs.Disable_Digital_Mode(slave_id_right,0);
-    }
-    else if(previousrightspeed < 0){
-      rmcs.Disable_Digital_Mode(slave_id_right,1);
-    }
+  // if(msg.data == 0){
+  //   if(previousrightspeed > 0){
+  //     rmcs.Disable_Digital_Mode(slave_id_right,0);
+  //   }
+  //   else if(previousrightspeed < 0){
+  //     rmcs.Disable_Digital_Mode(slave_id_right,1);
+  //   }
+  // }
+  // previousrightspeed = msg.data;  
+  else{
+    rmcs.Disable_Digital_Mode(slave_id_right,0);
+    rmcs.Disable_Digital_Mode(slave_id_right,1);
   }
-  previousrightspeed = msg.data;  
+}
+
+void subscribe_software_estop(const std_msgs::Float64& msg){
+  if(msg.data == 1){
+    // Software E-Stop is active
+    rmcs.STOP(slave_id_right);
+    rmcs.STOP(slave_id_left);
+  }
 }
 
 ros::Subscriber<std_msgs::Float64> left_motor_sub("/leftmotor/command", subscribe_left_command);
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
+ros::Subscriber<std_msgs::Float64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 void setup() {
   Serial.begin(115200);
+  motor_driver_init();
   right_init();
   Serial.println("\nRight Done");
   left_init();
@@ -122,6 +140,7 @@ void setup() {
   
   nh.subscribe(left_motor_sub);
   nh.subscribe(right_motor_sub);
+  nh.subscribe(software_estop_sub);
   
 }
 
@@ -129,28 +148,34 @@ void loop() {
   // put your main code here, to run repeatedly:
   publish_left_position();
   publish_right_position();
+  cnf_led_handle();
   es_statusUpdate_ros();
   cs_statusUpdate_ros();
   nh.spinOnce();
 
 }
 
-void es_statusUpdate_ros(){
+
+void cnf_led_handle(){
   switchMonitor.update();
+}
+
+void es_statusUpdate_ros(){
   es_status_msg.data = switchMonitor.get_es();
   es_status_pub.publish(&es_status_msg);
 }
 
 void cs_statusUpdate_ros(){
-  switchMonitor.update();
   cs_status_msg.data = switchMonitor.get_cs();
   cs_status_pub.publish(&cs_status_msg);
 }
 
-void right_init(){
+void motor_driver_init(){
   rmcs.Serial_selection(0);
-//  Serial.println("Writing Right Parameters");  
-  rmcs.begin(&Serial1,9600);    
+  rmcs.begin(&Serial1,9600); 
+}
+
+void right_init(){
   rmcs.WRITE_PARAMETER(slave_id_right,INP_CONTROL_MODE,PP_gain,PI_gain,VF_gain,LPR,acceleration,speed);
   rmcs.READ_PARAMETER(slave_id_right);
 //  rmcs.Speed(slave_id_right, 20); 
@@ -158,10 +183,7 @@ void right_init(){
   rmcs.Disable_Digital_Mode(slave_id_right,0);
 }
 
-void left_init(){
-//  rmcs.Serial_selection(0);           
-//  Serial.println("Writing Left Parameters");
-//  rmcs.begin(&Serial2,9600);    
+void left_init(){   
   rmcs.WRITE_PARAMETER(slave_id_left,INP_CONTROL_MODE,PP_gain,PI_gain,VF_gain,LPR,acceleration,speed);
   rmcs.READ_PARAMETER(slave_id_left);
 //  rmcs.Speed(slave_id_left, 5); 
@@ -170,17 +192,14 @@ void left_init(){
 }
 
 void publish_left_position(){
-  
   Current_position_left=rmcs.Position_Feedback(slave_id_left); 
 //  Serial.print("l ");
 //  Serial.println(Current_position_left);
   leftposition.data = Current_position_left;
   left_motor_pub.publish(&leftposition);
-  
 }
 
 void publish_right_position(){
-  
   Current_position_right=rmcs.Position_Feedback(slave_id_right); 
 //  Serial.print("r ");
 //  Serial.println(Current_position_right);
