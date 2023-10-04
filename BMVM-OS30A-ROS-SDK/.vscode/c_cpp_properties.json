@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/jatin/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/jatin/catkin_ws/src/BMVM-OS30A-ROS-SDK/bimu-rgbd-camera/src/bimu_rgbd_camera/include/**",
+        "/home/jatin/catkin_ws/src/BMVM-OS30A-ROS-SDK/bimu-rgbd-camera/src/bimu_rgbd_receive/include/**",
+        "/home/jatin/catkin_ws/src/rosserial/rosserial_server/include/**",
+        "/home/jatin/catkin_ws/src/rosserial/rosserial_test/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
