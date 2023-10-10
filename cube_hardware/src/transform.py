@@ -11,14 +11,15 @@ class OdomBaseLinkBroadcaster(Node):
     def __init__(self):
         super().__init__('odom_base_link_broadcaster')
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
-        self.subscription = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
+        self.subscription = self.create_subscription(Odometry, '/odometry/filtered', self.odom_callback, 10)
+
 
     def odom_callback(self, msg):
         # Create a TransformStamped message
         odom_to_base_link = TransformStamped()
         odom_to_base_link.header.stamp = self.get_clock().now().to_msg()
-        odom_to_base_link.header.frame_id = 'odom'
-        odom_to_base_link.child_frame_id = 'base_link'
+        odom_to_base_link.header.frame_id = msg.header.frame_id    
+        odom_to_base_link.child_frame_id = msg.child_frame_id
 
         # Set the translation
         odom_to_base_link.transform.translation.x = msg.pose.pose.position.x

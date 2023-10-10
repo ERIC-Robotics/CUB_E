@@ -72,7 +72,7 @@ class OdometryCalculator(Node):
         odom = Odometry()
         odom.header.stamp = self.get_clock().now().to_msg()
         odom.header.frame_id = "odom"
-        odom.child_frame_id = "base_link"
+        odom.child_frame_id = "base_footprint"
     
         # Set position
         odom.pose.pose.position = Point()

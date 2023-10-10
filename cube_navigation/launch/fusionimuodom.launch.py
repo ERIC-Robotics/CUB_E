@@ -18,8 +18,7 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[robot_localization_file_path, 
-        {'use_sim_time': True}])
+        parameters=[robot_localization_file_path])
     
     return LaunchDescription([
         start_robot_localization_cmd

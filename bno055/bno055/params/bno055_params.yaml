@@ -36,7 +36,7 @@ bno055:
     uart_timeout: 0.1
     data_query_frequency: 100
     calib_status_frequency: 0.1
-    frame_id: "bno055"
+    frame_id: "imu_v1_1"
     operation_mode: 0x0C
     placement_axis_remap: "P2"
     acc_factor: 100.0

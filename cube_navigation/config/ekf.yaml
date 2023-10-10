@@ -2,7 +2,7 @@
 ekf_filter_node:
     ros__parameters:
 
-        use_sim_time: true
+        use_sim_time: false
 
         
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
@@ -40,7 +40,7 @@ ekf_filter_node:
         debug: false
 
 # Defaults to "robot_localization_debug.txt" if unspecified. Please specify the full path.
-        debug_out_file: /path/to/debug/file.txt
+        # debug_out_file: 
 
 # Whether to broadcast the transformation over the /tf topic. Defaults to true if unspecified.
         publish_tf: true
@@ -71,9 +71,9 @@ ekf_filter_node:
 #     3b. MAKE SURE something else is generating the odom->base_link transform. Note that this can even be another state
 #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
         #map_frame: map                   # Defaults to "map" if unspecified
-        odom_frame: odom                 # Defaults to "odom" if unspecified
+        odom_frame: odom              # Defaults to "odom" if unspecified
         base_link_frame: base_footprint  # Defaults to "base_link" if unspecified
-        world_frame: odom                # Defaults to the value of odom_frame if unspecified
+        world_frame: odom              # Defaults to the value of odom_frame if unspecified
 
 # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
 # geometry_msgs/PoseWithCovarianceStamped, geometry_msgs/TwistWithCovarianceStamped,
@@ -117,7 +117,7 @@ ekf_filter_node:
 # always feasible, and so we expose the differential parameter. When differential mode is enabled, all absolute pose
 # data is converted to velocity data by differentiating the absolute pose measurements. These velocities are then
 # integrated as usual. NOTE: this only applies to sensors that provide pose measurements; setting differential to true
-# for twist measurements has no effect.
+# for twist measurements has no effect.s
         odom0_differential: false
 
 # [ADVANCED] When the node starts, if this parameter is true, then the first measurement is treated as a "zero point"
@@ -135,7 +135,7 @@ ekf_filter_node:
         odom0_pose_rejection_threshold: 5.0
         odom0_twist_rejection_threshold: 1.0
 
-        imu0: imu
+        imu0: bno055/imu
         imu0_config: [false, false, false,
                       true,  true,  true,
                       false, false, false,
@@ -158,7 +158,7 @@ ekf_filter_node:
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
-        imu0_remove_gravitational_acceleration: true
+        imu0_remove_gravitational_acceleration: false
 
 # [ADVANCED]  The EKF and UKF models follow a standard predict/correct cycle. During prediction, if there is no
 # acceleration reference, the velocity at time t+1 is simply predicted to be the same as the velocity at time t. During

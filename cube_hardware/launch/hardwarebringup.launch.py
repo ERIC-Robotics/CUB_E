@@ -13,6 +13,13 @@ def generate_launch_description():
 
   pkg_bno055 = get_package_share_directory('bno055')
   pkg_ydlidar = get_package_share_directory('ydlidar_ros2_driver')
+  pkg_cube_description = get_package_share_directory('cube_description')
+
+  state_pub = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource(
+      os.path.join(pkg_cube_description, 'launch', 'publish_urdf.launch.py'),
+    )
+  )
 
   imu = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
@@ -46,6 +53,7 @@ def generate_launch_description():
 
   ld = LaunchDescription()
 
+  ld.add_action(state_pub)
   ld.add_action(odometry)
   ld.add_action(cmdmotor)
   ld.add_action(transform)
