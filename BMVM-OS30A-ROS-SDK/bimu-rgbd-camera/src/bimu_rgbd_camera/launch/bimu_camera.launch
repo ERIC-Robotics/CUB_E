@@ -9,7 +9,7 @@
       <param name="file_path" type="string" value="$(find bimu_rgbd_camera)" />
       
       <param name="BlockingMode" type="string" value="yes"/>
-      <param name="frame_id"     type="string" value="camera_link"/>
+
       <param name="colorFormatNum" type="int" value="1"/>
       <param name="colorWidthNum"  type="int" value="1280"/>
       <param name="colorHeightNum"  type="int" value="920"/>
@@ -40,7 +40,8 @@
       <param name="pointCloudMaxFar" type="int" value="2000"/>
 
     </node>
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
-    args="0.0 0.0 0.2 0.0 0.0 0.0 /base_link /camera_link 40" />
   
 </launch>
+
+
+
