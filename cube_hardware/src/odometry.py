@@ -17,8 +17,8 @@ class OdometryCalculator(Node):
         self.last_left_position = 0
         self.last_right_position = 0
         
-        self.wheel_distance = 0.45  # m
-        self.wheel_radius = 0.08
+        self.wheel_distance = 0.33  # m
+        self.wheel_radius = 0.05
         self.count_per_revolution = 9048
         
         self.x = 0.0

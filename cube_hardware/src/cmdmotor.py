@@ -9,8 +9,8 @@ class CmdVelToMotorCommand:
     def __init__(self):
         self.node = rclpy.create_node('cmdvel_motorCommand')
         
-        self.wheel_radius = 0.08  # in meters
-        self.wheel_separation = 0.45  # in meters
+        self.wheel_radius = 0.05  # in meters
+        self.wheel_separation = 0.33  # in meters
 
         self.left_pub = self.node.create_publisher(Float64, '/leftmotor/command', 10)
         self.right_pub = self.node.create_publisher(Float64, '/rightmotor/command', 10)
