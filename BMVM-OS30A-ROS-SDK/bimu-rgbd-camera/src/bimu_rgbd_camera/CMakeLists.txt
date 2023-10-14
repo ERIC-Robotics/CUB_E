@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bimu_rgbd_camera)
 
-set(x86_flag TRUE)
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+  set(x86_flag TRUE)
+else()
+  set(x86_flag FALSE)
+endif()
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
