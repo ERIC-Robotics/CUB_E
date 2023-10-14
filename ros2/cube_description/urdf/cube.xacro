@@ -1,0 +1,183 @@
+<?xml version="1.0" ?>
+<robot name="cube" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find cube_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find cube_description)/urdf/cube.trans" />
+<xacro:include filename="$(find cube_description)/urdf/gazebo.xacro" />
+
+
+<link name="base_footprint">
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <box size="0.0 0.0 0.0" />
+    </geometry>
+  </visual>
+</link>
+
+<joint name="fixed_base_joint" type="fixed">
+  <parent link="base_footprint" />
+  <child link="base_link" />
+  <origin xyz="0 0 0" rpy="0 0 0" />
+</joint>
+
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="1.9410706945315624e-05 7.449572592086158e-17 0.07325173847508996" rpy="0 0 0"/>
+    <mass value="92.00463500203875"/>
+    <inertia ixx="1.293901" iyy="2.461346" izz="3.694097" ixy="-0.0" iyz="0.0" ixz="-4e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="imu_v1_1">
+  <inertial>
+    <origin xyz="0.0 0.0 0.0050000000000000044" rpy="0 0 0"/>
+    <mass value="0.07064999999999999"/>
+    <inertia ixx="6e-06" iyy="6e-06" izz="1.1e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.1 -0.0 -0.1055" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/imu_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="0.1 -0.0 -0.1055" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/imu_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="depth_camera_v1_1">
+  <inertial>
+    <origin xyz="0.006500000000000061 -3.011479954295737e-17 0.0" rpy="0 0 0"/>
+    <mass value="0.06123000182479622"/>
+    <inertia ixx="1.9e-05" iyy="1e-06" izz="1.9e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.28 0.0 -0.0805" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/depth_camera_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.28 0.0 -0.0805" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/depth_camera_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lidar_v1_1">
+  <inertial>
+    <origin xyz="7.385233546074017e-18 0.0 0.010000000000000009" rpy="0 0 0"/>
+    <mass value="0.6042068071016569"/>
+    <inertia ixx="0.000205" iyy="0.000205" izz="0.00037" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 -0.0 -0.1755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/lidar_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 -0.0 -0.1755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/lidar_v1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="right_wheel_v3_1">
+  <inertial>
+    <origin xyz="1.269686219929395e-17 -0.020000000000000018 0.0" rpy="0 0 0"/>
+    <mass value="5.623069146418319"/>
+    <inertia ixx="0.008763" iyy="0.016026" izz="0.008763" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.205 -0.0755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/right_wheel_v3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 0.205 -0.0755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/right_wheel_v3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel_v3_1">
+  <inertial>
+    <origin xyz="1.269686219929395e-17 0.020000000000000018 0.0" rpy="0 0 0"/>
+    <mass value="5.623069146418319"/>
+    <inertia ixx="0.008763" iyy="0.016026" izz="0.008763" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 -0.205 -0.0755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/left_wheel_v3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="steel_satin"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 -0.205 -0.0755" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://cube_description/meshes/left_wheel_v3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="Rigid 1" type="fixed">
+  <origin xyz="-0.1 0.0 0.1055" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="imu_v1_1"/>
+</joint>
+
+<joint name="Rigid 3" type="fixed">
+  <origin xyz="0.28 0.0 0.0805" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="depth_camera_v1_1"/>
+</joint>
+
+<joint name="Rigid 6" type="fixed">
+  <origin xyz="0.0 0.0 0.1755" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="lidar_v1_1"/>
+</joint>
+
+<joint name="Revolute 9" type="continuous">
+  <origin xyz="0.0 -0.205 0.0755" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="right_wheel_v3_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="Revolute 10" type="continuous">
+  <origin xyz="0.0 0.205 0.0755" rpy="0 0 0"/>
+  <parent link="base_footprint"/>
+  <child link="left_wheel_v3_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+</robot>
