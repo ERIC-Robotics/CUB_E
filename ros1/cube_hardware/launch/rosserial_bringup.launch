@@ -5,8 +5,4 @@
         <param name="baud" value="57600" />
     </node>
 
-    <include file="$(find bimu_rgbd_camera)/launch/bimu_camera.launch" />
-
-    <node pkg="object_detection" type="rgbdepthyolo.py" name="object_detect_node" output="screen" />
-
 </launch>

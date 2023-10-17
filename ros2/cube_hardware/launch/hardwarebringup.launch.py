@@ -14,6 +14,9 @@ def generate_launch_description():
   pkg_bno055 = get_package_share_directory('bno055')
   pkg_ydlidar = get_package_share_directory('ydlidar_ros2_driver')
   pkg_cube_description = get_package_share_directory('cube_description')
+  pkg_cube_navigation = get_package_share_directory('cube_navigation')
+  
+  robot_localization_file_path = os.path.join(pkg_cube_navigation, 'config/ekf.yaml') 
 
   state_pub = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
@@ -51,6 +54,14 @@ def generate_launch_description():
     output='screen'
   )
 
+  robot_localization_node = Node(
+    package='robot_localization',
+    executable='ekf_node',
+    name='ekf_filter_node',
+    output='screen',
+    parameters=[robot_localization_file_path]
+  )
+
   ld = LaunchDescription()
 
   ld.add_action(state_pub)
@@ -59,6 +70,7 @@ def generate_launch_description():
   ld.add_action(transform)
   ld.add_action(lidar)
   ld.add_action(imu)
+  ld.add_action(robot_localization_node)
 
   return ld
   
