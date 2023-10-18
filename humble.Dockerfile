@@ -2,7 +2,6 @@ FROM ros:humble
 
 RUN apt-get update && apt-get install -y \
     ros-humble-nav* \
-    ros-humble-gazebo* \
     ros-humble-slam-toolbox* \
     ros-humble-robot-localization* \
     ros-humble-xacro \

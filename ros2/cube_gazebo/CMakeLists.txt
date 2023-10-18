@@ -8,7 +8,6 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(gazebo_ros REQUIRED)
 find_package(cube_description REQUIRED)
 
 if(BUILD_TESTING)
