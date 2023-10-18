@@ -27,7 +27,12 @@ RUN /bin/bash -c 'source /opt/ros/humble/setup.bash \
 
 RUN apt-get update && apt-get install -y \
     ros-humble-teleop* \
-    ros-humble-joy*
+    ros-humble-joy* \
+    python3-pip
+
+RUN python3 -m pip install -U \
+    smbus \
+    pyserial
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 

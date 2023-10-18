@@ -32,6 +32,7 @@
 #define ROS2Verision "1.0.1"
 
 
+
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
 
@@ -200,6 +201,7 @@ int main(int argc, char *argv[]) {
         time = time * -1;
       }
       scan_msg->header.stamp.sec = time;
+      std::cout << time;
       scan_msg->header.stamp.nanosec =  scan.stamp - RCL_S_TO_NS(scan_msg->header.stamp.sec);
       scan_msg->header.frame_id = frame_id;
       pc_msg->header = scan_msg->header;
