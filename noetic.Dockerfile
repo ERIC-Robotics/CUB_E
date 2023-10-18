@@ -9,7 +9,7 @@ RUN apt-get install -y libudev-dev
 RUN apt-get update && apt-get install -y \
     ros-noetic-rospy*
     
-COPY ros1 /catkin_ws/src
+COPY /ros1 /catkin_ws/src
 
 WORKDIR /catkin_ws
 

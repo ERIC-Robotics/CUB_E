@@ -25,6 +25,10 @@ WORKDIR /colcon_ws
 RUN /bin/bash -c 'source /opt/ros/humble/setup.bash \
     && colcon build --symlink-install'
 
+RUN apt-get update && apt-get install -y \
+    ros-humble-teleop* \
+    ros-humble-joy*
+
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 RUN echo "source /colcon_ws/install/setup.bash" >> ~/.bashrc

@@ -4,16 +4,17 @@ services:
   ros1:
     image: ericroboticsindia/cube_stack:noetic_latest
     command: bash -c "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && roslaunch cube_hardware rosserial_bringup.launch"
+    # command: bash -c "source /opt/ros/noetic/setup.bash && roscore"
     volumes:
-      - "~/cube_stack/ros1:/catkin_ws/src"
-    deploy:
+      - "~/CUB_E/ros1:/catkin_ws/src"
+    # deploy:
       # replicas: 1
       # resources:
       #   limits:
       #     cpus: "0.2"
       #     memory: 1G 
-      restart_policy:
-        condition: on-failure
+      # restart_policy:
+      #   condition: on-failure
     devices:
       - "/dev/arduino_mega:/dev/arduino_mega"
   
@@ -26,22 +27,22 @@ services:
       - ros1
     network_mode: "host"
     volumes:
-      - "~/cube_stack/ros2:/colcon_ws/src"
-    deploy:
-      restart_policy:
-        condition: on-failure
+      - "~/CUB_E/ros2:/colcon_ws/src"
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
     devices:
       - "/dev/bno055:/dev/bno055"
       - "/dev/ydlidar_g2:/dev/ydlidar_g2"
 
   bridge:
-    image: ericroboticsindia/cube_stack:bridge_latest
+    image: ericroboticsindia/cube_stack:humble_bridge_v2.0.1
     environment:
       - "ROS_HOSTNAME=bridge"
       - "ROS_MASTER_URI=http://ros1:11311"
     command: bash -c "source /opt/ros/noetic/setup.bash && source /ros2_humble/install/setup.bash && source /ros2_depend/install/setup.bash && ros2 run ros1_bridge dynamic_bridge"
     depends_on:
       - ros1
-    deploy:
-      restart_policy:
-        condition: on-failure
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
