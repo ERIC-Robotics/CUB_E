@@ -57,12 +57,14 @@ WORKDIR /ros2_humble
 RUN mkdir -p src \
     && vcs import --input https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos src
 
-RUN cd src/ && rm -rf ros-visualization ros2/rviz ros2/bag
+
 
 RUN rosdep update && apt-get update \
     && rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
 
-RUN colcon build --symlink-install
+RUN cd src/ && rm -rf ros-visualization ros2/rviz ros2/rosbag2
+
+RUN colcon build --symlink-install --parallel-workers 2
 
 WORKDIR /ros2_depend
 
@@ -74,8 +76,10 @@ RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash \
     && source /ros2_humble/install/setup.bash \
     && colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure'
 
-RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash \
-    && source /ros2_humble/install/setup.bash \
-    && source /ros2_depend/install/setup.bash'
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+
+RUN echo "source /ros2_humble/install/setup.bash" >> ~/.bashrc
+
+RUN echo "source /ros2_depend/install/setup.bash" >> ~/.bashrc
 
 CMD [ "bash" ]

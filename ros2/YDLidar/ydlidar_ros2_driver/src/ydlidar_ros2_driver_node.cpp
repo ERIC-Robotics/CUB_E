@@ -163,8 +163,8 @@ int main(int argc, char *argv[]) {
     RCLCPP_ERROR(node->get_logger(), "%s\n", laser.DescribeError());
   }
   
-  auto laser_pub = node->create_publisher<sensor_msgs::msg::LaserScan>("scan", 10);
-  auto pc_pub = node->create_publisher<sensor_msgs::msg::PointCloud>("point_cloud", 10);
+  auto laser_pub = node->create_publisher<sensor_msgs::msg::LaserScan>("ydlidar/scan", 10);
+  auto pc_pub = node->create_publisher<sensor_msgs::msg::PointCloud>("ydlidar/point_cloud", 10);
   
   auto stop_scan_service =
     [&laser](const std::shared_ptr<rmw_request_id_t> request_header,
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
         time = time * -1;
       }
       scan_msg->header.stamp.sec = time;
-      std::cout << time;
+      std::cout << time << std::endl;
       scan_msg->header.stamp.nanosec =  scan.stamp - RCL_S_TO_NS(scan_msg->header.stamp.sec);
       scan_msg->header.frame_id = frame_id;
       pc_msg->header = scan_msg->header;
