@@ -5,7 +5,6 @@ from std_msgs.msg import Int64
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Quaternion, Twist
 from rclpy.node import Node
-from tf2_ros.transformations import euler_from_quaternion
 import math
 
 class OdometryCalculator(Node):
@@ -67,10 +66,10 @@ class OdometryCalculator(Node):
         delta_distance = (distance_left + distance_right) / 2
         delta_theta = (distance_right - distance_left) / self.wheel_distance
             
-        self.filtered_odom_msg.pose.pose.position.x += delta_distance * math.cos(self.theta)
-        self.filtered_odom_msg.pose.pose.position.y += delta_distance * math.sin(self.theta)
+        self.filtered_odom_msg.pose.pose.position.x += delta_distance * math.cos(self.yaw)
+        self.filtered_odom_msg.pose.pose.position.y += delta_distance * math.sin(self.yaw)
 
-        roll, pitch, self.yaw = euler_from_quaternion(self.filtered_odom_msg.pose.pose.orientation)
+        self.yaw = 2 * math.asin(self.filtered_odom_msg.pose.pose.orientation.z)
         self.yaw += delta_theta
             
         # print(self.left_position, self.right_position)

@@ -13,7 +13,7 @@ setup(
     py_modules=[
         srcpath + '.cmdmotor',
         srcpath + '.odometry', 
-        srcpath + '.test',
+        srcpath + '.lidar_publish',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -32,7 +32,7 @@ setup(
         'console_scripts': [
             'cmdmotor = src.cmdmotor:main',
             'odometry = src.odometry:main',
-            'test = src.test:main',
+            'lidarpub = src.lidar_publish:main',
             'transform = src.transform:main',
         ],
     },
