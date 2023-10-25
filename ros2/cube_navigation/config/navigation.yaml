@@ -107,6 +107,7 @@ controller_server:
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
+    odom_topic: /odometry/filtered
     failure_tolerance: 0.3
     progress_checker_plugin: "progress_checker"
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
@@ -128,22 +129,22 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: -0.4
+      min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.4
+      max_vel_x: 0.2
       max_vel_y: 0.0
-      max_vel_theta: 0.75
+      max_vel_theta: 0.6
       min_speed_xy: 0.0
-      max_speed_xy: 0.4
+      max_speed_xy: 0.0
       min_speed_theta: 0.0
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      acc_lim_x: 2.5
+      acc_lim_x: 0.2
       acc_lim_y: 0.0
-      acc_lim_theta: 3.2
-      decel_lim_x: -2.5
+      acc_lim_theta: 0.6
+      decel_lim_x: -0.2
       decel_lim_y: 0.0
-      decel_lim_theta: -3.2
+      decel_lim_theta: -0.6
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
@@ -166,7 +167,21 @@ controller_server:
       RotateToGoal.scale: 32.0
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
-      
+
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 4.0
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.1, 0.0, 0.4]
+    min_velocity: [-0.1, 0.0, -0.4]
+    max_accel: [0.05, 0.0, 0.2]
+    max_decel: [-0.05, 0.0, -0.2]
+    odom_topic: /odometry/filtered
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
 controller_server_rclcpp_node:
   ros__parameters:
     use_sim_time: False
