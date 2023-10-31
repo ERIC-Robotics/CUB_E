@@ -5,7 +5,16 @@ RUN apt-get update && apt-get install -y \
     ros-humble-slam-toolbox* \
     ros-humble-robot-localization* \
     ros-humble-xacro \
-    ros-humble-rmw-cyclonedds-cpp
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-demo-nodes-py* \
+    ros-humble-teleop* \
+    ros-humble-joy* 
+
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    && python3 -m pip install -U \
+    smbus \
+    pyserial
 
 RUN git clone https://github.com/YDLIDAR/YDLidar-SDK.git \
     && cd YDLidar-SDK \
@@ -15,24 +24,12 @@ RUN git clone https://github.com/YDLIDAR/YDLidar-SDK.git \
     && make \
     && make install
 
-RUN apt-get update && apt-get install -y \
-    ros-humble-demo-nodes-py*
-
 COPY /ros2 /colcon_ws/src
 
 WORKDIR /colcon_ws
 
 RUN /bin/bash -c 'source /opt/ros/humble/setup.bash \
     && colcon build --symlink-install'
-
-RUN apt-get update && apt-get install -y \
-    ros-humble-teleop* \
-    ros-humble-joy* \
-    python3-pip
-
-RUN python3 -m pip install -U \
-    smbus \
-    pyserial
 
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
