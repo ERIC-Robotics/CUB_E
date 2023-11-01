@@ -1,5 +1,5 @@
-base_frame: "base_"
-fixed_frame: "world"
+base_frame: "base_footprint"
+fixed_frame: "odom"
 use_cloud_input: false
 cloud_range_min: 0.1
 cloud_range_max: 50.0
@@ -11,8 +11,8 @@ use_odom: false
 use_vel: false
 stamped_vel: false
 publish_tf: false
-publish_pose: true
-publish_pose_stamped: true
+publish_pose: false
+publish_pose_stamped: false
 publish_pose_with_covariance: false
 publish_pose_with_covariance_stamped: true
 position_covariance: [1e-9, 1e-9, 1e-9]

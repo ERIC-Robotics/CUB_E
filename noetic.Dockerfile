@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-cv-bridge* \
     ros-noetic-rospy*
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && apt-get install -y \
     ros-noetic-pcl-ros*
 
