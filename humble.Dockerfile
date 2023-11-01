@@ -24,7 +24,7 @@ RUN git clone https://github.com/YDLIDAR/YDLidar-SDK.git \
     && make \
     && make install
 
-COPY /ros2 /colcon_ws/src
+COPY /ros2/src /colcon_ws/src
 
 WORKDIR /colcon_ws
 

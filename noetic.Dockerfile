@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get install -y libudev-dev
     
-COPY /ros1 /catkin_ws/src
+COPY /ros1/src /catkin_ws/src
 
 WORKDIR /catkin_ws
 
