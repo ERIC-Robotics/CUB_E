@@ -5,6 +5,9 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-cv-bridge* \
     ros-noetic-rospy*
 
+RUN apt-get update && apt-get install -y \
+    ros-noetic-pcl-ros*
+
 RUN apt-get install -y libudev-dev
     
 COPY /ros1/src /catkin_ws/src
