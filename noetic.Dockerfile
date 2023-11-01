@@ -19,6 +19,11 @@ WORKDIR /catkin_ws
 RUN apt-get update && cd src/BMVM-OS30A-ROS-SDK/HD-DM-Linux-SDK-5.0.1.17/DMPreview \
     && sh setup_env.sh
 
+RUN apt-get install -y libusb*
+
+RUN apt-get update && apt-get install -y \
+    ros-noetic-csm
+
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash \
     && catkin_make'
 
