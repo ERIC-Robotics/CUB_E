@@ -28,7 +28,7 @@ services:
     #   - ros1
     network_mode: "host"
     volumes:
-      - "~/CUB_E/ros2:/colcon_ws/src"
+      - "~/CUB_E/ros2/src:/colcon_ws/src"
     # deploy:
     #   restart_policy:
     #     condition: on-failure
