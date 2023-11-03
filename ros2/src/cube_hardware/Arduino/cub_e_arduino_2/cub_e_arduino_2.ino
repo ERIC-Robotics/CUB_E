@@ -25,11 +25,11 @@ ros::NodeHandle nh;
 
 byte slave_id_right=2;
 int INP_CONTROL_MODE=256;           
-int PP_gain=16;
-int PI_gain=16;
+int PP_gain=12;
+int PI_gain=3;
 int VF_gain=16;
 int LPR=2262;
-int acceleration=30;
+int acceleration=100;
 int speed=0;
 
 int sp = 5;
@@ -86,7 +86,9 @@ void setup() {
   nh.initNode();
   nh.advertise(right_motor_pub);
   nh.subscribe(right_motor_sub);
-  
+
+  nh.subscribe(software_estop_sub);
+
 }
 
 void loop() {

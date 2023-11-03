@@ -26,11 +26,11 @@ ros::NodeHandle nh;
 byte slave_id_left=7;
 
 int INP_CONTROL_MODE=256;           
-int PP_gain=16;
-int PI_gain=16;
+int PP_gain=12;
+int PI_gain=3;
 int VF_gain=16;
 int LPR=2262;
-int acceleration=30;
+int acceleration=100;
 int speed=0;
 
 const byte es_button_pin = 2;
