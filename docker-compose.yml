@@ -16,7 +16,8 @@ services:
       # restart_policy:
       #   condition: on-failure
     devices:
-      - "/dev/arduino_mega:/dev/arduino_mega"
+      - "/dev/arduino_mega_1:/dev/arduino_mega_1"
+      - "/dev/arduino_mega_2:/dev/arduino_mega_2"
   
 
   ros2:
@@ -36,7 +37,7 @@ services:
       - "/dev/ydlidar_g2:/dev/ydlidar_g2"
 
   bridge:
-    image: ericroboticsindia/cube_stack:humble_bridge_v2.0.1
+    image: ericroboticsindia/cube_stack:bridge_latest
     environment:
       - "ROS_HOSTNAME=bridge"
       - "ROS_MASTER_URI=http://ros1:11311"

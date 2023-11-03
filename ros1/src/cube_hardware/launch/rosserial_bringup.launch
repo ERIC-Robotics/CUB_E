@@ -1,7 +1,12 @@
 <launch>
     
     <node pkg="rosserial_python" type="serial_node.py" name="rosserial_node" output="screen">
-        <param name="port" value="/dev/arduino_mega" />
+        <param name="port" value="/dev/arduino_mega_1" />
+        <param name="baud" value="57600" />
+    </node>
+
+    <node pkg="rosserial_python" type="serial_node.py" name="rosserial_node_2" output="screen">
+        <param name="port" value="/dev/arduino_mega_2" />
         <param name="baud" value="57600" />
     </node>
 
