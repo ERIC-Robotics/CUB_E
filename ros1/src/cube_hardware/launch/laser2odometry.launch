@@ -2,6 +2,8 @@
     <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node" output="screen">
       <rosparam file="$(find cube_hardware)/config/laser_scan_matcher.yaml" command="load" />
       <remap from="/pose_with_covariance_stamped" to="pose2D/lidar"/>
+      <remap from="/imu/data" to="bno055/imu"/>
+      <!-- <remap from="/vel" to="cmdvel"/> -->
     </node>
   </launch>
   

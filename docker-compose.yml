@@ -3,7 +3,7 @@ version: '3.8'
 services:
   ros1:
     image: ericroboticsindia/cube_stack:noetic_latest
-    command: bash -c "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && roslaunch cube_hardware rosserial_bringup.launch"
+    command: bash -c "source /opt/ros/noetic/setup.bash && catkin_make && source /catkin_ws/devel/setup.bash && roslaunch cube_hardware rosserial_bringup.launch"
     # command: bash -c "source /opt/ros/noetic/setup.bash && roscore"
     volumes:
       - "~/CUB_E/ros1/src:/catkin_ws/src"

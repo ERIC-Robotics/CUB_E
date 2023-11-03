@@ -6,8 +6,8 @@ cloud_range_max: 50.0
 cloud_res: 0.05
 kf_dist_linear: 0.10
 kf_dist_angular: 0.174532925
-use_imu: false
-use_odom: false
+use_imu: true
+use_odom: true
 use_vel: false
 stamped_vel: false
 publish_tf: false

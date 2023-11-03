@@ -11,7 +11,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
 
     pkg_cube_navigation = get_package_share_directory('cube_navigation')
-    robot_localization_file_path = os.path.join(pkg_cube_navigation, 'config/ekf.yaml') 
+    robot_localization_file_path = os.path.join(pkg_cube_navigation, 'config/ekf_new.yaml') 
 
     start_robot_localization_cmd = Node(
         package='robot_localization',
