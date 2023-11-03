@@ -1,16 +1,16 @@
 FROM ros:noetic
 
+ENV DEBIAN_FRONTEND=noninterac
+
 RUN apt-get update && apt-get install -y \
     ros-noetic-rosserial* \
     ros-noetic-cv-bridge* \
-    ros-noetic-rospy*
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
+    ros-noetic-rospy* \
+    ros-noetic-csm \
     ros-noetic-pcl-ros*
 
-RUN apt-get install -y libudev-dev
+RUN apt-get install -y libudev-dev \
+    libusb*
     
 COPY /ros1/src /catkin_ws/src
 
@@ -18,11 +18,6 @@ WORKDIR /catkin_ws
 
 RUN apt-get update && cd src/BMVM-OS30A-ROS-SDK/HD-DM-Linux-SDK-5.0.1.17/DMPreview \
     && sh setup_env.sh
-
-RUN apt-get install -y libusb*
-
-RUN apt-get update && apt-get install -y \
-    ros-noetic-csm
 
 RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash \
     && catkin_make'
