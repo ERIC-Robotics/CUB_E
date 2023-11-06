@@ -73,11 +73,11 @@ def generate_launch_description():
   ld.add_action(state_pub)
   ld.add_action(odometry)
   ld.add_action(cmdmotor)
-  # ld.add_action(transform)
+  ld.add_action(transform)
   ld.add_action(lidar)
   ld.add_action(lidarpub)
-  # ld.add_action(imu)
-  # ld.add_action(robot_localization_node)
+  ld.add_action(imu)
+  ld.add_action(robot_localization_node)
 
   return ld
   

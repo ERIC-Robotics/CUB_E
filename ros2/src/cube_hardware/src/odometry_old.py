@@ -24,7 +24,6 @@ class OdometryCalculator(Node):
         self.x = 0.0
         self.y = 0.0
         self.theta = 0.0
-        self.yaw = 0.0
 
         # self.rate = self.node.create_rate(10) 
         self.rate = 10.0
@@ -33,15 +32,9 @@ class OdometryCalculator(Node):
         self.timer_ = self.create_timer((1/self.rate), self.odom_callback)
         self.left_sub = self.create_subscription(Int64, '/leftmotor/feedback', self.left_position_callback, 10)
         self.right_sub = self.create_subscription(Int64, '/rightmotor/feedback', self.right_position_callback, 10)
-        self.filtered_odom_sub = self.create_subscription(Odometry, '/odometry/filtered', self.filtered_odom_callback, 10)
-
-        self.filtered_odom_msg = Odometry()
 
     def odom_callback(self):
         self.calculate_odometry()
-
-    def filtered_odom_callback(self, msg):
-        self.filtered_odom_msg = msg
 
     def left_position_callback(self, msg):
         self.left_position = (-1) * msg.data
@@ -50,32 +43,30 @@ class OdometryCalculator(Node):
         self.right_position = msg.data
     
     def calculate_odometry(self):
-        # Update rate (10 Hz)
+         # Update rate (10 Hz)
         
         # while rclpy.ok():
 
-        delta_left = self.left_position - self.last_left_position
-        delta_right = self.right_position - self.last_right_position
+            delta_left = self.left_position - self.last_left_position
+            delta_right = self.right_position - self.last_right_position
             
-        self.last_left_position = self.left_position
-        self.last_right_position = self.right_position
+            self.last_left_position = self.left_position
+            self.last_right_position = self.right_position
             
-        distance_left = (2 * math.pi * self.wheel_radius * delta_left) / self.count_per_revolution
-        distance_right = (2 * math.pi * self.wheel_radius * delta_right) / self.count_per_revolution
+            distance_left = (2 * math.pi * self.wheel_radius * delta_left) / self.count_per_revolution
+            distance_right = (2 * math.pi * self.wheel_radius * delta_right) / self.count_per_revolution
             
-        delta_distance = (distance_left + distance_right) / 2
-        delta_theta = (distance_right - distance_left) / self.wheel_distance
+            delta_distance = (distance_left + distance_right) / 2
+            delta_theta = (distance_right - distance_left) / self.wheel_distance
             
-        self.filtered_odom_msg.pose.pose.position.x += delta_distance * math.cos(self.yaw)
-        self.filtered_odom_msg.pose.pose.position.y += delta_distance * math.sin(self.yaw)
-
-        self.yaw = 2 * math.asin(self.filtered_odom_msg.pose.pose.orientation.z)
-        self.yaw += delta_theta
+            self.x += delta_distance * math.cos(self.theta)
+            self.y += delta_distance * math.sin(self.theta)
+            self.theta += delta_theta
             
-        # print(self.left_position, self.right_position)
-        self.publish_odometry()
+            # print(self.left_position, self.right_position)
+            self.publish_odometry()
             
-        # self.rate.sleep()
+            # self.rate.sleep()
 
     def publish_odometry(self):
         odom = Odometry()
@@ -85,14 +76,14 @@ class OdometryCalculator(Node):
     
         # Set position
         odom.pose.pose.position = Point()
-        odom.pose.pose.position.x = self.filtered_odom_msg.pose.pose.position.x
-        odom.pose.pose.position.y = self.filtered_odom_msg.pose.pose.position.y
+        odom.pose.pose.position.x = self.x
+        odom.pose.pose.position.y = self.y
         odom.pose.pose.position.z = 0.0
-        odom.pose.pose.orientation = Quaternion() 
+        odom.pose.pose.orientation = Quaternion()
         odom.pose.pose.orientation.x = 0.0
         odom.pose.pose.orientation.y = 0.0
-        odom.pose.pose.orientation.z = math.sin(self.yaw/2)
-        odom.pose.pose.orientation.w = math.cos(self.yaw/2)
+        odom.pose.pose.orientation.z = math.sin(self.theta/2)
+        odom.pose.pose.orientation.w = math.cos(self.theta/2)
         
         # Set velocity (assuming it's zero in this example)
         odom.twist.twist = Twist()
