@@ -1,18 +1,33 @@
 #!/usr/bin/env python3
 
+"""
+odom_to_base_link_tf_broadcaster.py: Broadcasts the transformation from 'odom' frame to 'base_link' frame.
+
+This node subscribes to '/odometry/filtered' to receive odometry information, and then
+broadcasts a corresponding transformation to tf2. This allows other nodes to transform
+coordinates from the 'odom' frame to the 'base_link' frame and vice versa.
+
+Authors: Jatin Patil
+Version: 1.0
+Last Updated: 2023-Nov-09
+"""
+
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import TransformStamped
 from nav_msgs.msg import Odometry
 import tf2_ros
 
-
 class OdomBaseLinkBroadcaster(Node):
     def __init__(self):
         super().__init__('odom_base_link_broadcaster')
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
-        self.subscription = self.create_subscription(Odometry, '/odometry/filtered', self.odom_callback, 10)
-
+        self.subscription = self.create_subscription(
+            Odometry, 
+            '/odometry/filtered', 
+            self.odom_callback, 
+            10
+        )
 
     def odom_callback(self, msg):
         # Create a TransformStamped message
@@ -29,7 +44,7 @@ class OdomBaseLinkBroadcaster(Node):
         # Set the rotation
         odom_to_base_link.transform.rotation = msg.pose.pose.orientation
 
-        # Publish the transform
+        # Broadcast the transformation
         self.tf_broadcaster.sendTransform(odom_to_base_link)
 
 def main(args=None):
@@ -38,10 +53,13 @@ def main(args=None):
         odom_base_link_broadcaster = OdomBaseLinkBroadcaster()
         rclpy.spin(odom_base_link_broadcaster)
     except KeyboardInterrupt:
+        # Handle graceful shutdown
         pass
     except Exception as e:
+        # Handle other exceptions such as connectivity loss or ROS errors
         pass
     finally:
+        # Clean shutdown of the ROS client library
         rclpy.shutdown()
 
 if __name__ == '__main__':
