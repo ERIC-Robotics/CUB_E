@@ -14,6 +14,7 @@ setup(
         srcpath + '.cmdmotor',
         srcpath + '.odometry', 
         srcpath + '.lidar_publish',
+        srcpath + '.stop',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -34,6 +35,7 @@ setup(
             'odometry = src.odometry:main',
             'lidarpub = src.lidar_publish:main',
             'transform = src.transform:main',
+            'stop = src.stop:main',
         ],
     },
 )
