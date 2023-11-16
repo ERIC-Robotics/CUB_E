@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-rmw-cyclonedds-cpp \
     ros-humble-demo-nodes-py* \
     ros-humble-teleop* \
-    ros-humble-joy* 
+    ros-humble-joy* \
+    ros-humble-cartographer* 
 
 RUN apt-get update && apt-get install -y \
     python3-pip \
