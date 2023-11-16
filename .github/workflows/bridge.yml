@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Bridge
 on:
   workflow_dispatch:
 
@@ -27,24 +27,24 @@ jobs:
           --file bridge.Dockerfile \
           .
           
-    - name: Build and push noetic
-      env:
-        DOCKER_CLI_AARCH64_IMAGE: docker.io/docker/cli:24.0.6-dind-aarch64
-      run: |
-        docker buildx build \
-          --push --platform=linux/arm64,linux/amd64 \
-          -t ericroboticsindia/cube_stack:noetic_latest \
-          --file noetic.Dockerfile \
-          .
+    # - name: Build and push noetic
+    #   env:
+    #     DOCKER_CLI_AARCH64_IMAGE: docker.io/docker/cli:24.0.6-dind-aarch64
+    #   run: |
+    #     docker buildx build \
+    #       --push --platform=linux/arm64,linux/amd64 \
+    #       -t ericroboticsindia/cube_stack:noetic_latest \
+    #       --file noetic.Dockerfile \
+    #       .
 
-    - name: Build and push humble
-      env:
-        DOCKER_CLI_AARCH64_IMAGE: docker.io/docker/cli:24.0.6-dind-aarch64
-      run: |
-        docker buildx build \
-          --push --platform=linux/arm64,linux/amd64 \
-          -t ericroboticsindia/cube_stack:humble_latest \
-          --file humble.Dockerfile \
-          .
+    # - name: Build and push humble
+    #   env:
+    #     DOCKER_CLI_AARCH64_IMAGE: docker.io/docker/cli:24.0.6-dind-aarch64
+    #   run: |
+    #     docker buildx build \
+    #       --push --platform=linux/arm64,linux/amd64 \
+    #       -t ericroboticsindia/cube_stack:humble_latest \
+    #       --file humble.Dockerfile \
+    #       .
 
     
