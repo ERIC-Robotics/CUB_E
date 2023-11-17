@@ -3,7 +3,8 @@
 #include <std_msgs/Float64.h>
 #include <RMCS2303drive.h>
 #include <SwitchMonitor.h>
-
+#include <std_msgs/String.h>
+#include <FastLED.h>
 
 //For Arduino Uno Software serial needs to be used as there is only one hardware serial port and its connected to USB-Serial. 
 //   Drive to Arduino UNO/Nano connections
@@ -23,6 +24,9 @@
 
 ros::NodeHandle nh;
 
+#define NUM_LEDS 10
+#define DATA_PIN 3
+
 byte slave_id_right=2;
 int INP_CONTROL_MODE=256;           
 int PP_gain=12;
@@ -40,6 +44,7 @@ long int Current_position_right;
 ros::Publisher right_motor_pub("/rightmotor/feedback", &rightposition);
 
 RMCS2303 rmcs;
+CRGB leds[NUM_LEDS];
 
 void subscribe_right_command(const std_msgs::Float64& msg){
   if(msg.data > 0){
@@ -72,8 +77,32 @@ void subscribe_software_estop(const std_msgs::Float64& msg){
   }
 }
 
-ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
+void subscribe_nav_feedback(const std_msgs::String& msg){
+  if(msg.data == "Succeeded"){
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Green;
+    }
+    FastLED.show();
+  }
+  else if(msg.data == "Executing"){
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Yellow;
+    }
+    FastLED.show();
+  }
+  else if(msg.data == "Aborted"){
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Red;
+    }
+    FastLED.show();
+  }
+}
 
+ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
+ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
 ros::Subscriber<std_msgs::Float64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 
@@ -82,6 +111,8 @@ void setup() {
   motor_driver_init();
   right_init();
   Serial.println("\nRight Done");
+
+  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
   
   nh.initNode();
   nh.advertise(right_motor_pub);
