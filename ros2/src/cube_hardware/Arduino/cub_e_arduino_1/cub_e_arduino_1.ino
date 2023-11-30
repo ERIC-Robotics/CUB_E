@@ -23,7 +23,7 @@
 
 ros::NodeHandle nh;
 
-byte slave_id_left=7;
+byte slave_id_left=2;
 
 int INP_CONTROL_MODE=256;           
 int PP_gain=12;
@@ -36,7 +36,9 @@ int speed=0;
 const byte es_button_pin = 2;
 const byte cs_button_pin = 3;
 const int es_sig_pin = 53;
-const int cs_sig_pin = 52;
+const int cs_sig_pin = 4;
+
+#define contactor_pin 5
 
 int es_status = 0;
 int cs_status = 0;
@@ -62,26 +64,28 @@ SwitchMonitor switchMonitor(es_button_pin, cs_button_pin, es_sig_pin, cs_sig_pin
 
 
 void subscribe_left_command(const std_msgs::Float64& msg){
-  if(msg.data > 0){
-    rmcs.Speed(slave_id_left, msg.data); 
-    rmcs.Enable_Digital_Mode(slave_id_left,1); 
-  }
-  else if(msg.data < 0){
-    rmcs.Speed(slave_id_left, abs(msg.data)); 
-    rmcs.Enable_Digital_Mode(slave_id_left,0);
-  }
-  // if(msg.data == 0){
-  //   if(previousleftspeed > 0){
-  //     rmcs.Disable_Digital_Mode(slave_id_left,1);
-  //   }
-  //   else if(previousleftspeed < 0){
-  //     rmcs.Disable_Digital_Mode(slave_id_left,0);
-  //   }
-  // }
-  // previousleftspeed = msg.data;
-  else{
-    rmcs.Disable_Digital_Mode(slave_id_left,0);
-    rmcs.Disable_Digital_Mode(slave_id_left,1);
+  if(cs_status){
+    if(msg.data > 0){
+      rmcs.Speed(slave_id_left, msg.data); 
+      rmcs.Enable_Digital_Mode(slave_id_left,1); 
+    }
+    else if(msg.data < 0){
+      rmcs.Speed(slave_id_left, abs(msg.data)); 
+      rmcs.Enable_Digital_Mode(slave_id_left,0);
+    }
+    // if(msg.data == 0){
+    //   if(previousleftspeed > 0){
+    //     rmcs.Disable_Digital_Mode(slave_id_left,1);
+    //   }
+    //   else if(previousleftspeed < 0){
+    //     rmcs.Disable_Digital_Mode(slave_id_left,0);
+    //   }
+    // }
+    // previousleftspeed = msg.data;
+    else{
+      rmcs.Disable_Digital_Mode(slave_id_left,0);
+      rmcs.Disable_Digital_Mode(slave_id_left,1);
+    }
   }
 }
 
@@ -103,6 +107,8 @@ void setup() {
   left_init();
   Serial.println("\nLeft Done");
   switchMonitor.begin();
+
+  pinMode(contactor_pin, OUTPUT);
   
   nh.initNode();
   nh.advertise(left_motor_pub);
@@ -135,7 +141,16 @@ void es_statusUpdate_ros(){
 }
 
 void cs_statusUpdate_ros(){
-  cs_status_msg.data = switchMonitor.get_cs();
+  cs_status = switchMonitor.get_cs();
+  cs_status_msg.data = cs_status;
+  if(cs_status == 0){
+    digitalWrite(contactor_pin, LOW);
+    rmcs.Disable_Digital_Mode(slave_id_left,0);
+    rmcs.Disable_Digital_Mode(slave_id_left,1);
+  }
+  else{
+    digitalWrite(contactor_pin, HIGH);
+  }
   cs_status_pub.publish(&cs_status_msg);
 }
 

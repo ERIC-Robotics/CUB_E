@@ -24,8 +24,9 @@
 
 ros::NodeHandle nh;
 
-#define NUM_LEDS 10
-#define DATA_PIN 3
+#define NUM_LEDS 104
+#define DATA_PIN 4
+#define factor 10.819
 
 byte slave_id_right=2;
 int INP_CONTROL_MODE=256;           
@@ -38,35 +39,41 @@ int speed=0;
 
 int sp = 5;
 std_msgs::Int64 rightposition;
+std_msgs::Float64 battery_soc;
+
+int cs_status = 0;
 
 long int Current_position_right;
 
 ros::Publisher right_motor_pub("/rightmotor/feedback", &rightposition);
+ros::Publisher battery_soc_pub("/battery_soc", &battery_soc);
 
 RMCS2303 rmcs;
 CRGB leds[NUM_LEDS];
 
 void subscribe_right_command(const std_msgs::Float64& msg){
-  if(msg.data > 0){
-    rmcs.Speed(slave_id_right, msg.data); 
-    rmcs.Enable_Digital_Mode(slave_id_right,0); 
-  }
-  else if(msg.data < 0){
-    rmcs.Speed(slave_id_right, abs(msg.data)); 
-    rmcs.Enable_Digital_Mode(slave_id_right,1);
-  }
-  // if(msg.data == 0){
-  //   if(previousrightspeed > 0){
-  //     rmcs.Disable_Digital_Mode(slave_id_right,0);
-  //   }
-  //   else if(previousrightspeed < 0){
-  //     rmcs.Disable_Digital_Mode(slave_id_right,1);
-  //   }
-  // }
-  // previousrightspeed = msg.data;  
-  else{
-    rmcs.Disable_Digital_Mode(slave_id_right,0);
-    rmcs.Disable_Digital_Mode(slave_id_right,1);
+  if(cs_status){
+    if(msg.data > 0){
+      rmcs.Speed(slave_id_right, msg.data); 
+      rmcs.Enable_Digital_Mode(slave_id_right,0); 
+    }
+    else if(msg.data < 0){
+      rmcs.Speed(slave_id_right, abs(msg.data)); 
+      rmcs.Enable_Digital_Mode(slave_id_right,1);
+    }
+    // if(msg.data == 0){
+    //   if(previousrightspeed > 0){
+    //     rmcs.Disable_Digital_Mode(slave_id_right,0);
+    //   }
+    //   else if(previousrightspeed < 0){
+    //     rmcs.Disable_Digital_Mode(slave_id_right,1);
+    //   }
+    // }
+    // previousrightspeed = msg.data;  
+    else{
+      rmcs.Disable_Digital_Mode(slave_id_right,0);
+      rmcs.Disable_Digital_Mode(slave_id_right,1);
+    }
   }
 }
 
@@ -81,7 +88,7 @@ void subscribe_nav_feedback(const std_msgs::String& msg){
   if(msg.data == "Succeeded"){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
-      leds[i] = CRGB::Green;
+      leds[i] = CRGB::Red;
     }
     FastLED.show();
   }
@@ -95,15 +102,26 @@ void subscribe_nav_feedback(const std_msgs::String& msg){
   else if(msg.data == "Aborted"){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
-      leds[i] = CRGB::Red;
+      leds[i] = CRGB::Green;
     }
     FastLED.show();
+  }
+}
+
+void subscribe_cs(const std_msgs::Int64& msg){
+  cs_status = msg.data;
+  if(msg.data == 0){
+    // Software E-Stop is active
+    rmcs.Disable_Digital_Mode(slave_id_right,0);
+    rmcs.Disable_Digital_Mode(slave_id_right,1);
   }
 }
 
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
 ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
 ros::Subscriber<std_msgs::Float64> software_estop_sub("/es_status/software", subscribe_software_estop);
+
+ros::Subscriber<std_msgs::Int64> cs_sub("/cs_status/hardware", subscribe_cs);
 
 
 void setup() {
@@ -114,9 +132,17 @@ void setup() {
 
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
   
+  for (int  i = 0; i < NUM_LEDS; i++){
+    leds[i] = CRGB::Red;
+  }
+  FastLED.show();
+  
+  
   nh.initNode();
   nh.advertise(right_motor_pub);
+  nh.advertise(battery_soc_pub);
   nh.subscribe(right_motor_sub);
+  nh.subscribe(cs_sub);
 
   nh.subscribe(software_estop_sub);
 
@@ -125,6 +151,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   publish_right_position();
+  publish_battery_soc();
   nh.spinOnce();
 
 }
@@ -140,6 +167,11 @@ void right_init(){
 //  rmcs.Speed(slave_id_right, 20); 
 //  rmcs.Enable_Digital_Mode(slave_id_right,0); 
   rmcs.Disable_Digital_Mode(slave_id_right,0);
+}
+
+void publish_battery_soc(){
+  battery_soc.data = (analogRead(A0) * 4.88 * factor) / 1024.0;
+  battery_soc_pub.publish(&battery_soc);
 }
 
 void publish_right_position(){
