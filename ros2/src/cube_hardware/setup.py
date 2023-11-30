@@ -15,6 +15,7 @@ setup(
         srcpath + '.odometry', 
         srcpath + '.lidar_publish',
         srcpath + '.navigation_action',
+        srcpath + '.control',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -35,6 +36,7 @@ setup(
             'odometry = src.odometry:main',
             'lidarpub = src.lidar_publish:main',
             'transform = src.transform:main',
+            'control = src.control:main',
             'navigation_action = src.navigation_action:main',
         ],
     },
