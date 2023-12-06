@@ -40,7 +40,7 @@ setup(
             'transform = src.transform:main',
             'control = src.control:main',
             'lidar_min = src.lidar_min:main',
-            'lidar_safey = src.lidar_saftey:main',
+            'lidar_saftey = src.lidar_saftey:main',
             'navigation_action = src.navigation_action:main',
         ],
     },
