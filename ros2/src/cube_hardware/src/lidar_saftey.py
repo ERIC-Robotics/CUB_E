@@ -19,9 +19,9 @@ class ScanSubscriberNode(Node):
 
         self.soft_estop_pub = self.create_publisher(String, '/es_status/software/zone', 10)
 
-        self.forward_dist = 0.20
-        self.side_dist = 0.335
-        self.back_dist = 0.42
+        self.forward_dist = 0.393
+        self.side_dist = 0.535
+        self.back_dist = 0.677
 
         self.safe = True
 

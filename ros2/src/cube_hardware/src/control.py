@@ -159,7 +159,7 @@ class TeleopPublisher(Node):
         self.twist = Twist()
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release, suppress=True)
         self.listener.start()
-        self.timer = self.create_timer(0.5, self.timer_callback)
+        self.timer = self.create_timer(0.2, self.timer_callback)
 
     def on_press(self, key):
         if key == keyboard.Key.esc:
