@@ -42,6 +42,7 @@ const int cs_sig_pin = 4;
 
 int es_status = 0;
 int cs_status = 0;
+int soft_es = 0;
 
 int sp = 5;
 std_msgs::Int64 leftposition;
@@ -64,7 +65,7 @@ SwitchMonitor switchMonitor(es_button_pin, cs_button_pin, es_sig_pin, cs_sig_pin
 
 
 void subscribe_left_command(const std_msgs::Float64& msg){
-  if(cs_status){
+  if(cs_status && !soft_es){
     if(msg.data > 0){
       rmcs.Speed(slave_id_left, msg.data); 
       rmcs.Enable_Digital_Mode(slave_id_left,1); 
@@ -92,7 +93,13 @@ void subscribe_left_command(const std_msgs::Float64& msg){
 void subscribe_software_estop(const std_msgs::Int64& msg){
   if(msg.data == 1){
     // Software E-Stop is active
-    rmcs.STOP(slave_id_left);
+//    rmcs.STOP(slave_id_left);
+    rmcs.Disable_Digital_Mode(slave_id_left,0);
+    rmcs.Disable_Digital_Mode(slave_id_left,1);
+    soft_es = 1;
+  }
+  else{
+    soft_es = 0;
   }
 }
 

@@ -2,7 +2,7 @@ import rclpy
 import numpy as np
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Int64
+from std_msgs.msg import Int64, String
 
 
 class ScanSubscriberNode(Node):
@@ -17,12 +17,10 @@ class ScanSubscriberNode(Node):
             10  # QoS profile depth
         )
 
-        self.soft_estop_pub = self.create_publisher(Int64, '/es_status/software', 10)
-        timer_period = 1/3  # 3Hz
-        self.timer = self.create_timer(timer_period, self.software_estop_callback)
+        self.soft_estop_pub = self.create_publisher(String, '/es_status/software/zone', 10)
 
-        self.forward_dist = 0.35
-        self.side_dist = 0.29
+        self.forward_dist = 0.20
+        self.side_dist = 0.335
         self.back_dist = 0.42
 
         self.safe = True
@@ -34,23 +32,24 @@ class ScanSubscriberNode(Node):
 
         self.get_logger().info('Subscribed to scan topic')
     
-    def software_estop_callback(self):
-        msg = Int64()
-        if(self.safe):
-            msg.data = 0
-        else:
-            msg.data = 1
-        self.soft_estop_pub.publish(msg)
+    # def software_estop_callback(self):
+    #     msg = Int64()
+    #     if(self.safe):
+    #         msg.data = 0
+    #     else:
+    #         msg.data = 1
+    #     self.soft_estop_pub.publish(msg)
 
     def calculate_index(self):
         self.index[0] = np.arctan(self.side_dist/self.back_dist)
-        self.index[1] = np.pi - np.arctan(self.side_dist/self.back_dist)
-        self.index[2] = np.pi + np.arctan(self.side_dist/self.back_dist)
+        self.index[1] = np.pi - np.arctan(self.side_dist/self.forward_dist)
+        self.index[2] = np.pi + np.arctan(self.side_dist/self.forward_dist)
         self.index[3] = 2 * np.pi - np.arctan(self.side_dist/self.back_dist)
         print(self.index)
 
     def scan_callback(self, msg):
         # self.get_logger().info("First range value: {}".format((msg.ranges[10])))
+        estop_msg = String()
         for i in range(len(msg.ranges)):
             angle = i * self.angle_inc
 
@@ -61,6 +60,8 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance1) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Back")
                     self.safe = False
+                    estop_msg.data = "back"
+                    self.soft_estop_pub.publish(estop_msg)
                     break
             if angle > self.index[0] and angle < self.index[1]:
                 # Region 2
@@ -68,6 +69,8 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance2) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Right")
                     self.safe = False
+                    estop_msg.data = "right"
+                    self.soft_estop_pub.publish(estop_msg)
                     break
             if angle > self.index[1] and angle < self.index[2]:
                 # Region 3
@@ -75,6 +78,8 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance3) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Front")
                     self.safe = False
+                    estop_msg.data = "front"
+                    self.soft_estop_pub.publish(estop_msg)
                     break
             if angle > self.index[2] and angle < self.index[3]:
                 # Region 4
@@ -82,8 +87,13 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance4) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe left")       
                     self.safe = False    
+                    estop_msg.data = "left"
+                    self.soft_estop_pub.publish(estop_msg)
                     break     
             self.safe = True
+        if self.safe:
+            estop_msg.data = "safe"
+            self.soft_estop_pub.publish(estop_msg)
 
 def main(args=None):
     rclpy.init(args=args)

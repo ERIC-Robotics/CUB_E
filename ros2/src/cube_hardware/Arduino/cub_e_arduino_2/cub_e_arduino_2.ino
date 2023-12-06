@@ -42,6 +42,7 @@ std_msgs::Int64 rightposition;
 std_msgs::Float64 battery_soc;
 
 int cs_status = 0;
+int soft_es = 0;
 
 long int Current_position_right;
 
@@ -52,7 +53,7 @@ RMCS2303 rmcs;
 CRGB leds[NUM_LEDS];
 
 void subscribe_right_command(const std_msgs::Float64& msg){
-  if(cs_status){
+  if(cs_status && !soft_es){
     if(msg.data > 0){
       rmcs.Speed(slave_id_right, msg.data); 
       rmcs.Enable_Digital_Mode(slave_id_right,0); 
@@ -80,7 +81,13 @@ void subscribe_right_command(const std_msgs::Float64& msg){
 void subscribe_software_estop(const std_msgs::Int64& msg){
   if(msg.data == 1){
     // Software E-Stop is active
-    rmcs.STOP(slave_id_right); 
+//    rmcs.STOP(slave_id_right); 
+    rmcs.Disable_Digital_Mode(slave_id_right,0);
+    rmcs.Disable_Digital_Mode(slave_id_right,1);
+    soft_es = 1;
+  }
+  else{
+    soft_es = 0;
   }
 }
 
