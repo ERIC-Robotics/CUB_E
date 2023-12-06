@@ -148,7 +148,7 @@ controller_server:
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
-      sim_time: 1.5
+      sim_time: 2.2
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.1
@@ -170,7 +170,7 @@ controller_server:
 
 velocity_smoother:
   ros__parameters:
-    smoothing_frequency: 4.0
+    smoothing_frequency: 5.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
     max_velocity: [0.2, 0.0, 0.4]
@@ -191,7 +191,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom
+      global_frame: map
       robot_base_frame: base_footprint
       use_sim_time: False
       rolling_window: true

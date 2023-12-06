@@ -165,13 +165,13 @@ class TeleopPublisher(Node):
         if key == keyboard.Key.esc:
             return False
         if key in [keyboard.KeyCode.from_char('w'), keyboard.KeyCode.from_char('W')]:
-            self.twist.linear.x = 0.5
+            self.twist.linear.x = 0.2
         elif key in [keyboard.KeyCode.from_char('s'), keyboard.KeyCode.from_char('S')]:
-            self.twist.linear.x = -0.5
+            self.twist.linear.x = -0.2
         elif key in [keyboard.KeyCode.from_char('a'), keyboard.KeyCode.from_char('A')]:
-            self.twist.angular.z = 0.5
+            self.twist.angular.z = 0.4
         elif key in [keyboard.KeyCode.from_char('d'), keyboard.KeyCode.from_char('D')]:
-            self.twist.angular.z = -0.5
+            self.twist.angular.z = -0.4
 
     def on_release(self, key):
         if key in [keyboard.KeyCode.from_char('w'), keyboard.KeyCode.from_char('W'), keyboard.KeyCode.from_char('s'), keyboard.KeyCode.from_char('S')]:

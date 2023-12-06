@@ -16,6 +16,8 @@ setup(
         srcpath + '.lidar_publish',
         srcpath + '.navigation_action',
         srcpath + '.control',
+        srcpath + '.lidar_saftey',
+        srcpath + '.lidar_min',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -37,6 +39,8 @@ setup(
             'lidarpub = src.lidar_publish:main',
             'transform = src.transform:main',
             'control = src.control:main',
+            'lidar_min = src.lidar_min:main',
+            'lidar_safey = src.lidar_saftey:main',
             'navigation_action = src.navigation_action:main',
         ],
     },

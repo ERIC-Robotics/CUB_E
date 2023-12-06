@@ -77,7 +77,7 @@ void subscribe_right_command(const std_msgs::Float64& msg){
   }
 }
 
-void subscribe_software_estop(const std_msgs::Float64& msg){
+void subscribe_software_estop(const std_msgs::Int64& msg){
   if(msg.data == 1){
     // Software E-Stop is active
     rmcs.STOP(slave_id_right); 
@@ -119,7 +119,7 @@ void subscribe_cs(const std_msgs::Int64& msg){
 
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
 ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
-ros::Subscriber<std_msgs::Float64> software_estop_sub("/es_status/software", subscribe_software_estop);
+ros::Subscriber<std_msgs::Int64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 ros::Subscriber<std_msgs::Int64> cs_sub("/cs_status/hardware", subscribe_cs);
 

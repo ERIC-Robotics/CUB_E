@@ -62,11 +62,24 @@ def generate_launch_description():
     parameters=[robot_localization_file_path]
   )
 
-  lidarpub = Node(
+  # lidarpub = Node(
+  #   package='cube_hardware',
+  #   executable='lidarpub',
+  #   output='screen'
+  # )
+
+  lidar_min = Node(
     package='cube_hardware',
-    executable='lidarpub',
+    executable='lidar_min',
     output='screen'
   )
+
+  lidar_saftey = Node(
+    package='cube_hardware',
+    executable='lidar_saftey',
+    output='screen'
+  )
+
 
   ld = LaunchDescription()
 
@@ -75,7 +88,8 @@ def generate_launch_description():
   ld.add_action(cmdmotor)
   ld.add_action(transform)
   ld.add_action(lidar)
-  ld.add_action(lidarpub)
+  ld.add_action(lidar_min)
+  ld.add_action(lidar_saftey)
   ld.add_action(imu)
   ld.add_action(robot_localization_node)
 

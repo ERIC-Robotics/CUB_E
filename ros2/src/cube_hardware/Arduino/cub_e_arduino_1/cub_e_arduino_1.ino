@@ -89,7 +89,7 @@ void subscribe_left_command(const std_msgs::Float64& msg){
   }
 }
 
-void subscribe_software_estop(const std_msgs::Float64& msg){
+void subscribe_software_estop(const std_msgs::Int64& msg){
   if(msg.data == 1){
     // Software E-Stop is active
     rmcs.STOP(slave_id_left);
@@ -98,7 +98,7 @@ void subscribe_software_estop(const std_msgs::Float64& msg){
 
 ros::Subscriber<std_msgs::Float64> left_motor_sub("/leftmotor/command", subscribe_left_command);
 
-ros::Subscriber<std_msgs::Float64> software_estop_sub("/es_status/software", subscribe_software_estop);
+ros::Subscriber<std_msgs::Int64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 void setup() {
   Serial.begin(115200);
