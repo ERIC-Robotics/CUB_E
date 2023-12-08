@@ -10,19 +10,34 @@ class NavigateToGoalClient:
         self.action_client = ActionClient(self.node, NavigateToPose, 'navigate_to_pose')
         self.feedback_publisher = self.node.create_publisher(String, 'nav_feedback', 10)
 
-        self.send_goal()
+        self.subscription = self.node.create_subscription(
+            PoseStamped,
+            '/goal_pose_rviz',
+            self.goal_pose_callback,
+            10)
+
+        # self.send_goal()
         # self.feedback_publisher.publish(String(data="Succeeded"))
         self.published = False
 
-    def send_goal(self):
+    def goal_pose_callback(self, msg):
+        # self.node.get_logger().info('Received goal pose: "{0}"'.format(msg))
         goal_msg = NavigateToPose.Goal()
-        goal_msg.pose.header.frame_id = 'map'  # Set the frame_id according to your map frame
-        goal_msg.pose.pose.position.x = -2.0  # Set the x-coordinate of the goal pose
-        goal_msg.pose.pose.position.y = -3.0  # Set the y-coordinate of the goal pose
-        goal_msg.pose.pose.orientation.w = 1.0  # Set the orientation of the goal pose
+        goal_msg.pose.header.frame_id = msg.header.frame_id  # Set the frame_id according to your map frame
+        goal_msg.pose.pose = msg.pose   # Set the pose of the goal pose
 
         self.send_goal_future = self.action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback, )
         self.send_goal_future.add_done_callback(self.goal_response_callback)
+
+    # def send_goal(self):
+    #     goal_msg = NavigateToPose.Goal()
+    #     goal_msg.pose.header.frame_id = 'map'  # Set the frame_id according to your map frame
+    #     goal_msg.pose.pose.position.x = -2.0  # Set the x-coordinate of the goal pose
+    #     goal_msg.pose.pose.position.y = -3.0  # Set the y-coordinate of the goal pose
+    #     goal_msg.pose.pose.orientation.w = 1.0  # Set the orientation of the goal pose
+
+    #     self.send_goal_future = self.action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback, )
+    #     self.send_goal_future.add_done_callback(self.goal_response_callback)
 
     def feedback_callback(self, feedback_msg):
         # print(f'Received feedback: {feedback_msg.feedback}')
@@ -67,9 +82,7 @@ class NavigateToGoalClient:
         self.published = False
         
         # Shutdown the node after receiving the result
-        self.node.get_logger().info('Shutting down...')
-        self.node.destroy_node()
-        rclpy.shutdown()
+        self.node.get_logger().info('Done...')
 
 def main(args=None):
     rclpy.init(args=args)

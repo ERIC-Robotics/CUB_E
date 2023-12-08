@@ -18,6 +18,7 @@ setup(
         srcpath + '.control',
         srcpath + '.lidar_saftey',
         srcpath + '.lidar_min',
+        srcpath + '.navigation_test',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -41,6 +42,7 @@ setup(
             'control = src.control:main',
             'lidar_min = src.lidar_min:main',
             'lidar_saftey = src.lidar_saftey:main',
+            'navigation = src.navigation_test:main',
             'navigation_action = src.navigation_action:main',
         ],
     },
