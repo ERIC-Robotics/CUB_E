@@ -14,7 +14,7 @@ Last Updated: 2023-Nov-09
 
 import rclpy  # ROS2 Python client library
 from geometry_msgs.msg import Twist  # ROS2 message type for velocity
-from std_msgs.msg import Float64, String # ROS2 standard message type for double precision floating point numbers
+from std_msgs.msg import Float64, String, Int64 # ROS2 standard message type for double precision floating point numbers
 import math  # Import math module
 
 from cube_utils.msg import LidarSaftey
@@ -41,6 +41,8 @@ class CmdVelToMotorCommand:
         # Create publishers for left and right motor commands
         self.left_pub = self.node.create_publisher(Float64, '/leftmotor/command', 10)
         self.right_pub = self.node.create_publisher(Float64, '/rightmotor/command', 10)
+        self.soft_es_pub = self.node.create_publisher(Int64, '/es_status/software', 10)
+        self.soft_es_msg = Int64()
         
         # Create a subscription to the cmd_vel topic
         self.cmd_vel_sub = self.node.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
@@ -54,6 +56,11 @@ class CmdVelToMotorCommand:
 
     def es_callback(self, msg):
         self.lidar_saftey = msg
+        if self.lidar_saftey.object:
+            self.soft_es_msg.data = 1
+        else:
+            self.soft_es_msg.data = 0
+        self.soft_es_pub.publish(self.soft_es_msg)
         # print(self.es_soft_status)
 
     def cmd_vel_callback(self, data):
