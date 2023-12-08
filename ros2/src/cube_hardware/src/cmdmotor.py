@@ -17,6 +17,9 @@ from geometry_msgs.msg import Twist  # ROS2 message type for velocity
 from std_msgs.msg import Float64, String # ROS2 standard message type for double precision floating point numbers
 import math  # Import math module
 
+from cube_utils.msg import LidarSaftey
+
+
 class CmdVelToMotorCommand:
     """
     This class converts a Twist command (linear and angular velocity)
@@ -33,7 +36,7 @@ class CmdVelToMotorCommand:
         # Define wheel parameters
         self.wheel_radius = 0.08  # Radius of the wheels in meters
         self.wheel_separation = 0.45  # Distance between the wheels in meters
-        self.es_soft_status = "safe"
+        self.lidar_saftey = LidarSaftey()
 
         # Create publishers for left and right motor commands
         self.left_pub = self.node.create_publisher(Float64, '/leftmotor/command', 10)
@@ -43,14 +46,14 @@ class CmdVelToMotorCommand:
         self.cmd_vel_sub = self.node.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
 
         self.scan_subscriber = self.node.create_subscription(
-            String,
+            LidarSaftey,
             '/es_status/software/zone',  # Replace 'scan' with the actual name of your scan topic
             self.es_callback,
             10  # QoS profile depth
         )
 
     def es_callback(self, msg):
-        self.es_soft_status = msg.data
+        self.lidar_saftey = msg
         # print(self.es_soft_status)
 
     def cmd_vel_callback(self, data):
@@ -61,21 +64,34 @@ class CmdVelToMotorCommand:
         leftrpm = Float64()
         rightrpm = Float64()
 
-        if(self.es_soft_status != 'safe'):
-            if(self.es_soft_status == 'front'):
+        if self.lidar_saftey.object:
+            # if(self.es_soft_status == 'front'):
+            #     if data.linear.x > 0.0:
+            #         data.linear.x = 0.0
+            # elif self.es_soft_status == 'left':
+            #     if data.angular.z > 0.0:
+            #         data.angular.z = 0.0
+            # elif self.es_soft_status == 'back':
+            #     if data.linear.x < 0.0:
+            #         data.linear.x = 0.0
+            # elif self.es_soft_status == 'right':
+            #     if data.angular.z < 0.0:
+            #         data.angular.z = 0.0
+            if self.lidar_saftey.front:
                 if data.linear.x > 0.0:
                     data.linear.x = 0.0
-            elif self.es_soft_status == 'left':
+            if self.lidar_saftey.left:
                 if data.angular.z > 0.0:
                     data.angular.z = 0.0
-            elif self.es_soft_status == 'back':
+            if self.lidar_saftey.back:
                 if data.linear.x < 0.0:
                     data.linear.x = 0.0
-            elif self.es_soft_status == 'right':
+            if self.lidar_saftey.right:
                 if data.angular.z < 0.0:
                     data.angular.z = 0.0
 
-        print("linear: " + str(data.linear.x) + " angular: " + str(data.angular.z))
+        # print("linear: " + str(data.linear.x) + " angular: " + str(data.angular.z))
+            self.node.get_logger().info("linear: " + str(data.linear.x) + " angular: " + str(data.angular.z))
 
         # Calculate wheel velocities from cmd_vel Twist message
         left_velocity = data.linear.x - (self.wheel_separation / 2) * data.angular.z

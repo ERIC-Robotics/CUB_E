@@ -4,6 +4,8 @@ from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Int64, String
 
+from cube_utils.msg import LidarSaftey
+
 
 class ScanSubscriberNode(Node):
     def __init__(self):
@@ -17,11 +19,14 @@ class ScanSubscriberNode(Node):
             10  # QoS profile depth
         )
 
-        self.soft_estop_pub = self.create_publisher(String, '/es_status/software/zone', 10)
+        self.lidar_saftey_debug_pub = self.create_publisher(LaserScan, '/es_status/software/zone/debug', 10)
+        self.debug = LaserScan()
+
+        self.lidar_saftey_pub = self.create_publisher(LidarSaftey, '/es_status/software/zone', 10)
 
         self.forward_dist = 0.393
-        self.side_dist = 0.535
-        self.back_dist = 0.677
+        self.side_dist = 0.435
+        self.back_dist = 0.477
 
         self.safe = True
 
@@ -29,16 +34,9 @@ class ScanSubscriberNode(Node):
         self.angle_inc = 0.012466637417674065
 
         self.calculate_index()
+        self.lidar_saftey_msg = LidarSaftey()
 
         self.get_logger().info('Subscribed to scan topic')
-    
-    # def software_estop_callback(self):
-    #     msg = Int64()
-    #     if(self.safe):
-    #         msg.data = 0
-    #     else:
-    #         msg.data = 1
-    #     self.soft_estop_pub.publish(msg)
 
     def calculate_index(self):
         self.index[0] = np.arctan(self.side_dist/self.back_dist)
@@ -47,21 +45,25 @@ class ScanSubscriberNode(Node):
         self.index[3] = 2 * np.pi - np.arctan(self.side_dist/self.back_dist)
         print(self.index)
 
+
+
     def scan_callback(self, msg):
-        # self.get_logger().info("First range value: {}".format((msg.ranges[10])))
-        estop_msg = String()
+
+        #debug
+        self.debug = msg
+
+        self.safe = True
         for i in range(len(msg.ranges)):
             angle = i * self.angle_inc
 
             if angle < self.index[0] or angle > self.index[3]:
                 # Region 1
-                # print(angle)
                 distance1 = self.back_dist / np.cos(angle)
                 if msg.ranges[i] < abs(distance1) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Back")
                     self.safe = False
-                    estop_msg.data = "back"
-                    self.soft_estop_pub.publish(estop_msg)
+                    self.lidar_saftey_msg.back = 1
+                    self.lidar_saftey_msg.object = 1
                     break
             if angle > self.index[0] and angle < self.index[1]:
                 # Region 2
@@ -69,8 +71,8 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance2) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Right")
                     self.safe = False
-                    estop_msg.data = "right"
-                    self.soft_estop_pub.publish(estop_msg)
+                    self.lidar_saftey_msg.right = 1
+                    self.lidar_saftey_msg.object = 1
                     break
             if angle > self.index[1] and angle < self.index[2]:
                 # Region 3
@@ -78,8 +80,8 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance3) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Front")
                     self.safe = False
-                    estop_msg.data = "front"
-                    self.soft_estop_pub.publish(estop_msg)
+                    self.lidar_saftey_msg.front = 1
+                    self.lidar_saftey_msg.object = 1
                     break
             if angle > self.index[2] and angle < self.index[3]:
                 # Region 4
@@ -87,13 +89,39 @@ class ScanSubscriberNode(Node):
                 if msg.ranges[i] < abs(distance4) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe left")       
                     self.safe = False    
-                    estop_msg.data = "left"
-                    self.soft_estop_pub.publish(estop_msg)
+                    self.lidar_saftey_msg.left = 1
+                    self.lidar_saftey_msg.object = 1
                     break     
-            self.safe = True
+
+        for i in range(len(msg.ranges)):
+            angle = i * self.angle_inc
+
+            if angle < self.index[0] or angle > self.index[3]:
+                # Region 1
+                # print(angle)
+                distance1 = self.back_dist / np.cos(angle)
+                self.debug.ranges[i] = abs(distance1)
+            if angle > self.index[0] and angle < self.index[1]:
+                # Region 2
+                distance2 = self.side_dist / np.sin(angle)
+                self.debug.ranges[i] = abs(distance2)
+            if angle > self.index[1] and angle < self.index[2]:
+                # Region 3
+                distance3 = self.forward_dist / np.cos(angle)
+                self.debug.ranges[i] = abs(distance3)
+            if angle > self.index[2] and angle < self.index[3]:
+                # Region 4
+                distance4 = self.side_dist / np.sin(angle)
+                self.debug.ranges[i] = abs(distance4)
+
+
+
         if self.safe:
-            estop_msg.data = "safe"
-            self.soft_estop_pub.publish(estop_msg)
+            self.lidar_saftey_msg = LidarSaftey()
+
+        self.lidar_saftey_pub.publish(self.lidar_saftey_msg)
+        self.lidar_saftey_debug_pub.publish(self.debug)
+        self.lidar_saftey_msg = LidarSaftey()
 
 def main(args=None):
     rclpy.init(args=args)
