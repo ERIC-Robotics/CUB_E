@@ -20,7 +20,7 @@ class NavFeedbackNode(Node):
 
         # Publisher
         self.publisher = self.create_publisher(Int64, '/test_nav', 10)
-        self.publisher = self.create_publisher(Int64, '/nav_feedback', 10)
+        self.publisher_ = self.create_publisher(Int64, '/nav_feedback', 10)
 
 
         self.get_logger().info('Started nav_feedback_')
