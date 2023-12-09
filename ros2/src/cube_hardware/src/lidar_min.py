@@ -22,6 +22,8 @@ class ScanSubscriberNode(Node):
 
         self.new_lidar = LaserScan()
 
+        self.ignore_list = [70,64,63,71,72,73,437,438,439,65,66,67,68,69,74,75,433,434,435,436,440,441,442,443]
+
         self.get_logger().info('Subscribed to scan topic')
 
 
@@ -38,17 +40,14 @@ class ScanSubscriberNode(Node):
         #         ind.append(val)
         #         self.new_lidar.ranges[i] = 0.0
         # print(ind)
-        self.new_lidar.ranges[70] = 0.0
-        self.new_lidar.ranges[64] = 0.0
-        self.new_lidar.ranges[63] = 0.0
-        self.new_lidar.ranges[71] = 0.0
-        self.new_lidar.ranges[437] = 0.0
-        self.new_lidar.ranges[438] = 0.0
-        self.new_lidar.ranges[439] = 0.0
+
+        for i in self.ignore_list:
+            self.new_lidar.ranges[i] = 0.0
         # for i in range(len(self.new_lidar.ranges)):
         #     # angle = i * self.angle_inc
         #     if(self.new_lidar.ranges[i] < 0.25 and self.new_lidar.ranges[i] != 0.0):
         #         print(i, self.new_lidar.ranges[i])
+        print()
         self.scan_publisher.publish(self.new_lidar)
 
 
