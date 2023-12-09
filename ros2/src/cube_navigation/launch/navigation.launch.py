@@ -64,6 +64,9 @@ def generate_launch_description():
             executable='rviz2',
             name='rviz2',
             output='screen',
+            remappings=[
+                ('/goal_pose', '/goal_pose_rviz'),
+            ],
             arguments=['-d', rviz_config_path],
             condition=IfCondition(LaunchConfiguration("rviz")),
             parameters=[{'use_sim_time': LaunchConfiguration("sim")}]
