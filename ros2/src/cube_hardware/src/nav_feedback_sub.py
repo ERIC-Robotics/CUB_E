@@ -21,11 +21,7 @@ class NavFeedbackNode(Node):
         self.publisher = self.create_publisher(Int64, '/nav_feedback', 10)
         self.get_logger().info('Started nav_feedback_sub')
 
-        while True:
-            if self.pub:
-                self.publisher.publish(self.feedback)
-                self.pub = False
-                self.get_logger().info('Data published !!')
+            
 
     def listener_callback(self, msg):
         self.get_logger().info('Received feedback: "%s"' % msg.data)
@@ -36,7 +32,14 @@ class NavFeedbackNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     nav_feedback_node = NavFeedbackNode()
-    rclpy.spin(nav_feedback_node)
+
+    while True:
+            if nav_feedback_node.pub:
+                nav_feedback_node.publisher.publish(nav_feedback_node.feedback)
+                nav_feedback_node.pub = False
+                nav_feedback_node.get_logger().info('Data published !!')
+            rclpy.spin_once(nav_feedback_node)
+    # rclpy.spin(nav_feedback_node)
     nav_feedback_node.destroy_node()
     rclpy.shutdown()
 
