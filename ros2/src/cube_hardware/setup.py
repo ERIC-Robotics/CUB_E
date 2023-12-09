@@ -18,6 +18,7 @@ setup(
         srcpath + '.control',
         srcpath + '.lidar_saftey',
         srcpath + '.lidar_min',
+        srcpath + '.transform_gazebo',
         srcpath + '.transform'],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -41,6 +42,7 @@ setup(
             'control = src.control:main',
             'lidar_min = src.lidar_min:main',
             'lidar_saftey = src.lidar_saftey:main',
+            'transform_gazebo = src.transform_gazebo:main',
             'navigation_action = src.navigation_action:main',
         ],
     },

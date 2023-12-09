@@ -11,6 +11,8 @@
 <joint name="fixed_base_joint" type="fixed">
   <parent link="base_footprint" />
   <child link="base_link" />
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <axis xyz="0 0 0"/>
 </joint>
 
 
@@ -21,16 +23,17 @@
     <inertia ixx="1.033748" iyy="1.280415" izz="1.201" ixy="0.031639" iyz="-0.040215" ixz="0.114859"/>
   </inertial>
   <visual>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
     <geometry>
       <mesh filename="package://cube_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="opaque160160160"/>
   </visual>
   <collision>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.006" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://cube_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <!-- <mesh filename="package://cube_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/> -->
+      <box size="0.45 0.05 0.01" />
     </geometry>
   </collision>
 </link>
@@ -162,14 +165,14 @@
   <origin xyz="-0.014189 0.12 0.08" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="left_wheel_v1_1"/>
-  <axis xyz="-0.001999 0.999998 0.0"/>
+  <axis xyz="-0.0 1.0 0.0"/>
 </joint>
 
 <joint name="Revolute 5" type="continuous">
   <origin xyz="-0.013725 -0.12 0.08" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="right_wheel_v1_1"/>
-  <axis xyz="0.001999 0.999998 -0.0"/>
+  <axis xyz="0.0 1.0 -0.0"/>
 </joint>
 
 </robot>

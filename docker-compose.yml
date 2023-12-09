@@ -22,7 +22,7 @@ services:
 
   ros2:
     image: ericroboticsindia/cube_stack:humble_latest
-    command: bash -c "source /opt/ros/humble/setup.bash && source /colcon_ws/install/setup.bash && colcon build --symlink-install && source /colcon_ws/install/setup.bash && ros2 launch cube_hardware hardwarebringup.launch.py"
+    command: bash -c "source /opt/ros/humble/setup.bash && source /colcon_ws/install/setup.bash && colcon build --symlink-install && source /colcon_ws/install/setup.bash && ros2 launch cube_hardware roscon.launch.py"
     # depends_on:
     #   - bridge
     #   - ros1
