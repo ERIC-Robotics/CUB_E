@@ -88,6 +88,8 @@ def main(args=None):
     rclpy.init(args=args)
     navigate_to_goal_client = NavigateToGoalClient()
     rclpy.spin(navigate_to_goal_client.node)
+    navigate_to_goal_client.node.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
