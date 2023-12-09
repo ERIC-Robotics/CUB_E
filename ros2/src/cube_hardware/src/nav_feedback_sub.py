@@ -20,6 +20,8 @@ class NavFeedbackNode(Node):
 
     def listener_callback(self, msg):
         self.get_logger().info('Received feedback: "%s"' % msg.data)
+        self.publisher.publish(msg)
+        self.get_logger().info('Data published !!')
 
 def main(args=None):
     rclpy.init(args=args)
