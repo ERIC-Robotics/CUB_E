@@ -19,23 +19,15 @@ class NavFeedbackNode(Node):
         self.pub = False
 
         # Publisher
+        self.publisher = self.create_publisher(Int64, '/test_nav', 10)
         self.publisher = self.create_publisher(Int64, '/nav_feedback', 10)
 
-        # Timer
-        timer_period = 0.5  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.get_logger().info('Started nav_feedback_sub')
-
-            
-    def timer_callback(self):
-        self.publisher.publish(self.feedback)
-        self.get_logger().info(' published!!')
+        self.get_logger().info('Started nav_feedback_')
 
     def listener_callback(self, msg):
         self.get_logger().info('Received feedback: "%s"' % msg.data)
-        self.pub = True
-        self.feedback = msg
+        self.publisher.publish(msg)
         
 
 def main(args=None):
