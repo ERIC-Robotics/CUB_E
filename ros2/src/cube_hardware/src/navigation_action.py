@@ -2,13 +2,13 @@ import rclpy
 from rclpy.action import ActionClient
 from geometry_msgs.msg import PoseStamped
 from nav2_msgs.action import NavigateToPose
-from std_msgs.msg import String
+from std_msgs.msg import String, Int64
 
 class NavigateToGoalClient:
     def __init__(self):
         self.node = rclpy.create_node('navigate_to_goal_client')
         self.action_client = ActionClient(self.node, NavigateToPose, 'navigate_to_pose')
-        self.feedback_publisher = self.node.create_publisher(String, 'nav_feedback', 10)
+        self.feedback_publisher = self.node.create_publisher(Int64, 'nav_feedback', 10)
 
         self.subscription = self.node.create_subscription(
             PoseStamped,
@@ -45,7 +45,7 @@ class NavigateToGoalClient:
         # print(feedback_msg.feedback)
         # print(feedback_msg)
         if not self.published:
-            self.feedback_publisher.publish(String(data="Executing"))
+            self.feedback_publisher.publish(Int64(data=2))
             self.published = True
         pass
 
@@ -54,7 +54,7 @@ class NavigateToGoalClient:
         print(goal_handle)
         if not goal_handle.accepted:
             print('Goal was rejected')
-            self.feedback_publisher.publish(String(data="Aborted"))
+            self.feedback_publisher.publish(Int64(Int64=0))
             return
 
         print('Goal was accepted. Waiting for result...')
@@ -73,11 +73,11 @@ class NavigateToGoalClient:
         # 6 — Aborted.    
         if result.status == 4:
             print('Goal was successful!')
-            self.feedback_publisher.publish(String(data="Succeeded"))
+            self.feedback_publisher.publish(Int64(data=1))
             
         else:
             print(f'Goal failed with result code: {result}')
-            self.feedback_publisher.publish(String(data="Aborted"))
+            self.feedback_publisher.publish(Int64(data=0))
         
         self.published = False
         

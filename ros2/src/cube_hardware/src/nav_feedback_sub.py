@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from std_msgs.msg import String, Int64
 
 class NavFeedbackNode(Node):
 
@@ -8,14 +8,14 @@ class NavFeedbackNode(Node):
         super().__init__('nav_feedback_node')
         # Subscriber
         self.subscription = self.create_subscription(
-            String,
+            Int64,
             '/nav_feedback',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
 
         # Publisher
-        self.publisher = self.create_publisher(String, '/nav_feedback', 10)
+        self.publisher = self.create_publisher(Int64, '/nav_feedback', 10)
         self.get_logger().info('Started nav_feedback_sub')
 
     def listener_callback(self, msg):

@@ -66,22 +66,22 @@ void subscribe_software_estop(const std_msgs::Int64& msg){
   }
 }
 
-void subscribe_nav_feedback(const std_msgs::String& msg){
-  if(msg.data == "Succeeded"){
+void subscribe_nav_feedback(const std_msgs::Int64& msg){
+  if(msg.data == 1){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
       leds[i] = CRGB::Red;
     }
     FastLED.show();
   }
-  else if(msg.data == "Executing"){
+  else if(msg.data == 2){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
       leds[i] = CRGB::Yellow;
     }
     FastLED.show();
   }
-  else if(msg.data == "Aborted"){
+  else if(msg.data == 0){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
       leds[i] = CRGB::Green;
@@ -91,7 +91,7 @@ void subscribe_nav_feedback(const std_msgs::String& msg){
 }
 
 
-ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
+ros::Subscriber<std_msgs::Int64> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
 ros::Subscriber<std_msgs::Int64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 
