@@ -79,6 +79,11 @@ def generate_launch_description():
     executable='lidar_saftey',
     output='screen'
   )
+  nav_action = Node(
+    package='cube_hardware',
+    executable='navigation_action',
+    output='screen'
+  )
 
 
   ld = LaunchDescription()
@@ -86,6 +91,7 @@ def generate_launch_description():
 #   ld.add_action(state_pub)
 #   ld.add_action(odometry)
   ld.add_action(cmdmotor)
+  ld.add_action(nav_action)
 #   ld.add_action(transform)
 #   ld.add_action(lidar)
 #   ld.add_action(lidar_min)
