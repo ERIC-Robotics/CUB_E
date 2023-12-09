@@ -98,7 +98,7 @@ def generate_launch_description():
 #   ld.add_action(odometry)
   ld.add_action(cmdmotor)
   ld.add_action(nav_feedback_sub)
-  ld.add_action(navigation_action)
+  # ld.add_action(navigation_action)
 #   ld.add_action(transform)
 #   ld.add_action(lidar)
 #   ld.add_action(lidar_min)

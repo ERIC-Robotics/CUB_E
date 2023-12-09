@@ -9,7 +9,7 @@ class NavFeedbackNode(Node):
         # Subscriber
         self.subscription = self.create_subscription(
             Int64,
-            '/nav_feedback',
+            '/nav_feedback_',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -27,7 +27,7 @@ class NavFeedbackNode(Node):
 
     def listener_callback(self, msg):
         self.get_logger().info('Received feedback: "%s"' % msg.data)
-        self.publisher.publish(msg)
+        self.publisher_.publish(msg)
         
 
 def main(args=None):

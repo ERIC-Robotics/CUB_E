@@ -8,7 +8,7 @@ class NavigateToGoalClient:
     def __init__(self):
         self.node = rclpy.create_node('navigate_to_goal_client')
         self.action_client = ActionClient(self.node, NavigateToPose, 'navigate_to_pose')
-        self.feedback_publisher = self.node.create_publisher(Int64, 'nav_feedback', 10)
+        self.feedback_publisher = self.node.create_publisher(Int64, 'nav_feedback_', 10)
 
         self.subscription = self.node.create_subscription(
             PoseStamped,
