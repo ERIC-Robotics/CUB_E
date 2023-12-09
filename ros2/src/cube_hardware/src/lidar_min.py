@@ -47,7 +47,7 @@ class ScanSubscriberNode(Node):
         #     # angle = i * self.angle_inc
         #     if(self.new_lidar.ranges[i] < 0.25 and self.new_lidar.ranges[i] != 0.0):
         #         print(i, self.new_lidar.ranges[i])
-        print()
+        # print()
         self.scan_publisher.publish(self.new_lidar)
 
 

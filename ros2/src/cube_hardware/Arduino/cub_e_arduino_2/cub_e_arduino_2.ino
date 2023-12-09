@@ -79,15 +79,20 @@ void subscribe_right_command(const std_msgs::Float64& msg){
 }
 
 void subscribe_software_estop(const std_msgs::Int64& msg){
-  if(msg.data == 1){
+  if(msg.data == 0){
     // Software E-Stop is active
-//    rmcs.STOP(slave_id_right); 
-    rmcs.Disable_Digital_Mode(slave_id_right,0);
-    rmcs.Disable_Digital_Mode(slave_id_right,1);
-    soft_es = 1;
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Red;
+    }
+    FastLED.show();
   }
   else{
-    soft_es = 0;
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Green;
+    }
+    FastLED.show();
   }
 }
 
