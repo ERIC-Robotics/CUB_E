@@ -77,7 +77,7 @@ void subscribe_nav_feedback(const std_msgs::Int64& msg){
   else if(msg.data == 2){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
-      leds[i] = CRGB::Yellow;
+      leds[i] = CRGB::White;
     }
     FastLED.show();
   }
