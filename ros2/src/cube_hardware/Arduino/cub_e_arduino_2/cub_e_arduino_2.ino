@@ -42,7 +42,9 @@ std_msgs::Int64 rightposition;
 std_msgs::Float64 battery_soc;
 
 int cs_status = 0;
+int es_status = 0;
 int soft_es = 0;
+int nav_status = 0;
 
 long int Current_position_right;
 
@@ -53,7 +55,7 @@ RMCS2303 rmcs;
 CRGB leds[NUM_LEDS];
 
 void subscribe_right_command(const std_msgs::Float64& msg){
-  if(cs_status && !soft_es){
+  if(cs_status){
     if(msg.data > 0){
       rmcs.Speed(slave_id_right, msg.data); 
       rmcs.Enable_Digital_Mode(slave_id_right,0); 
@@ -79,44 +81,58 @@ void subscribe_right_command(const std_msgs::Float64& msg){
 }
 
 void subscribe_software_estop(const std_msgs::Int64& msg){
-  if(msg.data == 0){
-    // Software E-Stop is active
-    for (int  i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Red;
+  soft_es = msg.data;
+  if(es_status == 0){
+    if(msg.data == 0){
+      if(nav_status == 2){
+        for (int  i = 0; i < NUM_LEDS; i++)
+        {
+          leds[i] = CRGB::White;
+        }
+        FastLED.show();
+      }
+      else{      
+        for (int  i = 0; i < NUM_LEDS; i++)
+        {
+          leds[i] = CRGB::Red;
+        }
+        FastLED.show();
+      }
     }
-    FastLED.show();
-  }
-  else{
-    for (int  i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Green;
+    else{
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Green;
+      }
+      FastLED.show();
     }
-    FastLED.show();
   }
 }
 
 void subscribe_nav_feedback(const std_msgs::String& msg){
-  if(msg.data == "Succeeded"){
-    for (int  i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Red;
+  nav_status = msg.data;
+  if(!es_status && !soft_es){
+    if(msg.data == 1){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Red;
+      }
+      FastLED.show();
     }
-    FastLED.show();
-  }
-  else if(msg.data == "Executing"){
-    for (int  i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Yellow;
+    else if(msg.data == 2){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::White;
+      }
+      FastLED.show();
     }
-    FastLED.show();
-  }
-  else if(msg.data == "Aborted"){
-    for (int  i = 0; i < NUM_LEDS; i++)
-    {
-      leds[i] = CRGB::Green;
+    else if(msg.data == 0){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Green;
+      }
+      FastLED.show();
     }
-    FastLED.show();
   }
 }
 
@@ -129,11 +145,23 @@ void subscribe_cs(const std_msgs::Int64& msg){
   }
 }
 
+void subscribe_es(const std_msgs::Int64& msg){
+  es_status = msg.data;
+  if(msg.data == 1){
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::Green;
+    }
+    FastLED.show();
+  }
+}
+
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
 ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
 ros::Subscriber<std_msgs::Int64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 ros::Subscriber<std_msgs::Int64> cs_sub("/cs_status/hardware", subscribe_cs);
+ros::Subscriber<std_msgs::Int64> es_sub("/es_status/hardware", subscribe_es);
 
 
 void setup() {
@@ -155,7 +183,8 @@ void setup() {
   nh.advertise(battery_soc_pub);
   nh.subscribe(right_motor_sub);
   nh.subscribe(cs_sub);
-
+  nh.subscribe(es_sub);
+  nh.subscribe(nav_feedback_sub);
   nh.subscribe(software_estop_sub);
 
 }

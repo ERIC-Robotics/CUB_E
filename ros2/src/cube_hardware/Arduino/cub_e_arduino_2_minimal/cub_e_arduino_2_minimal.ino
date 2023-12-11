@@ -42,7 +42,7 @@ void subscribe_software_estop(const std_msgs::Int64& msg){
       if(nav_status == 2){
         for (int  i = 0; i < NUM_LEDS; i++)
         {
-          leds[i] = CRGB::Yellow;
+          leds[i] = CRGB::White;
         }
         FastLED.show();
       }
@@ -77,7 +77,7 @@ void subscribe_nav_feedback(const std_msgs::Int64& msg){
     else if(msg.data == 2){
       for (int  i = 0; i < NUM_LEDS; i++)
       {
-        leds[i] = CRGB::Yellow;
+        leds[i] = CRGB::White;
       }
       FastLED.show();
     }
@@ -115,14 +115,14 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
   
   for (int  i = 0; i < NUM_LEDS; i++){
-    leds[i] = CRGB::Blue;
+    leds[i] = CRGB::Red;
   }
   FastLED.show();
   
   
   nh.initNode();
   nh.subscribe(es_sub);
-//  nh.subscribe(nav_feedback_sub);
+  nh.subscribe(nav_feedback_sub);
 //
   nh.subscribe(software_estop_sub);
 

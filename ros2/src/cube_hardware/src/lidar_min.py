@@ -22,7 +22,7 @@ class ScanSubscriberNode(Node):
 
         self.new_lidar = LaserScan()
 
-        self.ignore_list = [70,64,63,71,72,73,437,438,439,65,66,67,68,69,74,75,433,434,435,436,440,441,442,443,444]
+        self.ignore_list = [432,433,434,435,436,437,438,439,440,441,442,443,444,445,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76]
 
         self.get_logger().info('Subscribed to scan topic')
 
