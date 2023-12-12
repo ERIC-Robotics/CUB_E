@@ -9,7 +9,7 @@ class NavigateToGoalClient:
         self.node = rclpy.create_node('navigate_to_goal_client')
         self.action_client = ActionClient(self.node, NavigateToPose, 'navigate_to_pose')
         self.feedback_publisher = self.node.create_publisher(Int64, 'nav_feedback_', 10)
-        self.feedback_publisher_timer = self.create_timer(0.5, self.feedback_publisher_timer_pub)
+        self.feedback_publisher_timer = self.node.create_timer(0.5, self.feedback_publisher_timer_pub)
         self.subscription = self.node.create_subscription(
             PoseStamped,
             '/goal_pose_rviz', 
@@ -49,7 +49,7 @@ class NavigateToGoalClient:
         # print(feedback_msg.feedback)
         # print(feedback_msg)
         if not self.published:
-            self.nav_status = 2
+            self.nav_status.data = 2
             self.feedback_publisher.publish(self.nav_status)
             self.published = True
         pass
@@ -59,7 +59,7 @@ class NavigateToGoalClient:
         print(goal_handle)
         if not goal_handle.accepted:
             print('Goal was rejected')
-            self.nav_status = 0
+            self.nav_status.data = 0
             self.feedback_publisher.publish(self.nav_status)
             return
 
@@ -79,12 +79,12 @@ class NavigateToGoalClient:
         # 6 — Aborted.    
         if result.status == 4:
             print('Goal was successful!')
-            self.nav_status = 1
+            self.nav_status.data = 1
             self.feedback_publisher.publish(self.nav_status)
             
         else:
             print(f'Goal failed with result code: {result}')
-            self.nav_status = 0
+            self.nav_status.data = 0
             self.feedback_publisher.publish(self.nav_status)
         
         self.published = False
