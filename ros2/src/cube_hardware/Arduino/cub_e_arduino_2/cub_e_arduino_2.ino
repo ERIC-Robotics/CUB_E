@@ -78,7 +78,7 @@ void subscribe_software_estop(const std_msgs::Int64& msg){
       if(nav_status == 2){
         for (int  i = 0; i < NUM_LEDS; i++)
         {
-          leds[i] = CRGB::White;
+          leds[i] = CRGB::Yellow;
         }
         FastLED.show();
       }
@@ -100,7 +100,7 @@ void subscribe_software_estop(const std_msgs::Int64& msg){
   }
 }
 
-void subscribe_nav_feedback(const std_msgs::String& msg){
+void subscribe_nav_feedback(const std_msgs::Int64& msg){
   nav_status = msg.data;
   if(!es_status && !soft_es){
     if(nav_status == 1){
@@ -113,7 +113,7 @@ void subscribe_nav_feedback(const std_msgs::String& msg){
     else if(nav_status == 2){
       for (int  i = 0; i < NUM_LEDS; i++)
       {
-        leds[i] = CRGB::White;
+        leds[i] = CRGB::Yellow;
       }
       FastLED.show();
     }
@@ -148,7 +148,7 @@ void subscribe_es(const std_msgs::Int64& msg){
 }
 
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
-ros::Subscriber<std_msgs::String> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
+ros::Subscriber<std_msgs::Int64> nav_feedback_sub("/nav_feedback", subscribe_nav_feedback);
 ros::Subscriber<std_msgs::Int64> software_estop_sub("/es_status/software", subscribe_software_estop);
 
 ros::Subscriber<std_msgs::Int64> cs_sub("/cs_status/hardware", subscribe_cs);
