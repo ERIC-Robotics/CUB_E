@@ -151,12 +151,8 @@ void cs_statusUpdate_ros(){
   cs_status = switchMonitor.get_cs();
   cs_status_msg.data = cs_status;
   if(cs_status == 0){
-    digitalWrite(contactor_pin, LOW);
     rmcs.Disable_Digital_Mode(slave_id_left,0);
     rmcs.Disable_Digital_Mode(slave_id_left,1);
-  }
-  else{
-    digitalWrite(contactor_pin, HIGH);
   }
   cs_status_pub.publish(&cs_status_msg);
 }

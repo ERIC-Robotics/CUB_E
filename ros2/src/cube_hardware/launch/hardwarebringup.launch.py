@@ -80,6 +80,12 @@ def generate_launch_description():
     output='screen'
   )
 
+  nav_feedback_sub = Node(
+    package='cube_hardware',
+    executable='nav_feedback_sub',
+    output='screen'
+  )
+
 
   ld = LaunchDescription()
 
@@ -91,6 +97,7 @@ def generate_launch_description():
   ld.add_action(lidar_min)
   ld.add_action(lidar_saftey)
   ld.add_action(imu)
+  ld.add_action(nav_feedback_sub)
   ld.add_action(robot_localization_node)
 
   return ld

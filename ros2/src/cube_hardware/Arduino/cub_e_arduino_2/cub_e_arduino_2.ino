@@ -64,15 +64,6 @@ void subscribe_right_command(const std_msgs::Float64& msg){
       rmcs.Speed(slave_id_right, abs(msg.data)); 
       rmcs.Enable_Digital_Mode(slave_id_right,1);
     }
-    // if(msg.data == 0){
-    //   if(previousrightspeed > 0){
-    //     rmcs.Disable_Digital_Mode(slave_id_right,0);
-    //   }
-    //   else if(previousrightspeed < 0){
-    //     rmcs.Disable_Digital_Mode(slave_id_right,1);
-    //   }
-    // }
-    // previousrightspeed = msg.data;  
     else{
       rmcs.Disable_Digital_Mode(slave_id_right,0);
       rmcs.Disable_Digital_Mode(slave_id_right,1);
@@ -83,7 +74,7 @@ void subscribe_right_command(const std_msgs::Float64& msg){
 void subscribe_software_estop(const std_msgs::Int64& msg){
   soft_es = msg.data;
   if(es_status == 0){
-    if(msg.data == 0){
+    if(soft_es == 0){
       if(nav_status == 2){
         for (int  i = 0; i < NUM_LEDS; i++)
         {
@@ -112,21 +103,21 @@ void subscribe_software_estop(const std_msgs::Int64& msg){
 void subscribe_nav_feedback(const std_msgs::String& msg){
   nav_status = msg.data;
   if(!es_status && !soft_es){
-    if(msg.data == 1){
+    if(nav_status == 1){
       for (int  i = 0; i < NUM_LEDS; i++)
       {
         leds[i] = CRGB::Red;
       }
       FastLED.show();
     }
-    else if(msg.data == 2){
+    else if(nav_status == 2){
       for (int  i = 0; i < NUM_LEDS; i++)
       {
         leds[i] = CRGB::White;
       }
       FastLED.show();
     }
-    else if(msg.data == 0){
+    else if(nav_status == 0){
       for (int  i = 0; i < NUM_LEDS; i++)
       {
         leds[i] = CRGB::Green;
@@ -138,7 +129,7 @@ void subscribe_nav_feedback(const std_msgs::String& msg){
 
 void subscribe_cs(const std_msgs::Int64& msg){
   cs_status = msg.data;
-  if(msg.data == 0){
+  if(cs_status == 0){
     // Software E-Stop is active
     rmcs.Disable_Digital_Mode(slave_id_right,0);
     rmcs.Disable_Digital_Mode(slave_id_right,1);
@@ -147,7 +138,7 @@ void subscribe_cs(const std_msgs::Int64& msg){
 
 void subscribe_es(const std_msgs::Int64& msg){
   es_status = msg.data;
-  if(msg.data == 1){
+  if(es_status == 1){
     for (int  i = 0; i < NUM_LEDS; i++)
     {
       leds[i] = CRGB::Green;
@@ -199,7 +190,7 @@ void loop() {
 
 void motor_driver_init(){
   rmcs.Serial_selection(0);
-  rmcs.begin(&Serial1,9600); 
+  rmcs.begin(&Serial2,9600); 
 }
 
 void right_init(){
