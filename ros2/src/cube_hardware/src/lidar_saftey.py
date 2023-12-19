@@ -28,7 +28,6 @@ class ScanSubscriberNode(Node):
         self.side_dist = 0.435
         self.back_dist = 0.477
 
-        self.safe = True
 
         self.index = [0, 0, 0, 0]
         self.angle_inc = 0.012466637417674065
@@ -49,10 +48,11 @@ class ScanSubscriberNode(Node):
 
     def scan_callback(self, msg):
 
+        self.lidar_saftey_msg = LidarSaftey()
+
         #debug
         self.debug = msg
 
-        self.safe = True
         for i in range(len(msg.ranges)):
             angle = i * self.angle_inc
 
@@ -61,37 +61,29 @@ class ScanSubscriberNode(Node):
                 distance1 = self.back_dist / np.cos(angle)
                 if msg.ranges[i] < abs(distance1) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Back")
-                    self.safe = False
                     self.lidar_saftey_msg.back = 1
                     self.lidar_saftey_msg.object = 1
-                    break
             if angle > self.index[0] and angle < self.index[1]:
                 # Region 2
                 distance2 = self.side_dist / np.sin(angle)
                 if msg.ranges[i] < abs(distance2) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Right")
-                    self.safe = False
                     self.lidar_saftey_msg.right = 1
                     self.lidar_saftey_msg.object = 1
-                    break
             if angle > self.index[1] and angle < self.index[2]:
                 # Region 3
                 distance3 = self.forward_dist / np.cos(angle)
                 if msg.ranges[i] < abs(distance3) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe Front")
-                    self.safe = False
                     self.lidar_saftey_msg.front = 1
                     self.lidar_saftey_msg.object = 1
-                    break
             if angle > self.index[2] and angle < self.index[3]:
                 # Region 4
                 distance4 = self.side_dist / np.sin(angle)
                 if msg.ranges[i] < abs(distance4) and msg.ranges[i] != 0.0:
                     self.get_logger().info("Not safe left")       
-                    self.safe = False    
                     self.lidar_saftey_msg.left = 1
                     self.lidar_saftey_msg.object = 1
-                    break     
 
         for i in range(len(msg.ranges)):
             angle = i * self.angle_inc
@@ -113,11 +105,6 @@ class ScanSubscriberNode(Node):
                 # Region 4
                 distance4 = self.side_dist / np.sin(angle)
                 self.debug.ranges[i] = abs(distance4)
-
-
-
-        if self.safe:
-            self.lidar_saftey_msg = LidarSaftey()
 
         self.lidar_saftey_pub.publish(self.lidar_saftey_msg)
         self.lidar_saftey_debug_pub.publish(self.debug)
