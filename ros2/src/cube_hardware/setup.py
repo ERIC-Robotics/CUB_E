@@ -15,6 +15,7 @@ setup(
         srcpath + '.odometry', 
         srcpath + '.lidar_publish',
         srcpath + '.navigation_action',
+        srcpath + '.navigation_waypoint_action',
         srcpath + '.control',
         srcpath + '.lidar_saftey',
         srcpath + '.lidar_min',
@@ -46,6 +47,7 @@ setup(
             'lidar_saftey = src.lidar_saftey:main',
             'navigation = src.navigation_test:main',
             'navigation_action = src.navigation_action:main',
+            'navigation_waypoint_action = src.navigation_waypoint_action:main',
         ],
     },
 )
