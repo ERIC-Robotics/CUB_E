@@ -43,11 +43,12 @@ class ScanSubscriberNode(Node):
 
         for i in self.ignore_list:
             self.new_lidar.ranges[i] = 0.0
-        for i in range(len(self.new_lidar.ranges)):
-            # angle = i * self.angle_inc
-            if(self.new_lidar.ranges[i] < 0.25 and self.new_lidar.ranges[i] != 0.0):
-                print(i, self.new_lidar.ranges[i])
-                self.get_logger().info('index: ', i)
+            
+        # for i in range(len(self.new_lidar.ranges)):
+        #     # angle = i * self.angle_inc
+        #     if(self.new_lidar.ranges[i] < 0.25 and self.new_lidar.ranges[i] != 0.0):
+        #         print(i, self.new_lidar.ranges[i])
+        #         self.get_logger().info('index: ', i)
         # print()
         self.scan_publisher.publish(self.new_lidar)
 
