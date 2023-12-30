@@ -47,13 +47,14 @@ class ScanSubscriberNode(Node):
         self.index[2] = np.pi + np.arctan(self.side_dist / self.forward_dist)
         self.index[3] = 2 * np.pi - np.arctan(self.side_dist / self.back_dist)
         print(self.index)
-        self.index_arr = [angle / self.angle_inc for angle in self.index]
+        self.index_arr = [int(angle / self.angle_inc) for angle in self.index]
 
     def scan_callback(self, msg):
         self.lidar_saftey_msg = LidarSaftey()
 
         # debug
         self.debug = msg
+        self.safe = True
 
         for i in range(0, self.index_arr[0]):
             angle = i * self.angle_inc
@@ -62,6 +63,7 @@ class ScanSubscriberNode(Node):
                 self.get_logger().info("Not safe Back")
                 self.lidar_saftey_msg.back = 1
                 self.lidar_saftey_msg.object = 1
+                self.safe = False
                 break
 
         for i in range(self.index_arr[0], self.index_arr[1]):
@@ -71,6 +73,7 @@ class ScanSubscriberNode(Node):
                 self.get_logger().info("Not safe Right")
                 self.lidar_saftey_msg.right = 1
                 self.lidar_saftey_msg.object = 1
+                self.safe = False
                 break
 
         for i in range(self.index_arr[1], self.index_arr[2]):
@@ -80,6 +83,7 @@ class ScanSubscriberNode(Node):
                 self.get_logger().info("Not safe Front")
                 self.lidar_saftey_msg.front = 1
                 self.lidar_saftey_msg.object = 1
+                self.safe = False
                 break
         
         for i in range(self.index_arr[2], self.index_arr[3]):
@@ -89,6 +93,7 @@ class ScanSubscriberNode(Node):
                 self.get_logger().info("Not safe left")
                 self.lidar_saftey_msg.left = 1
                 self.lidar_saftey_msg.object = 1
+                self.safe = False
                 break
         
         for i in range(self.index_arr[0], len(msg.ranges)):
@@ -98,6 +103,7 @@ class ScanSubscriberNode(Node):
                 self.get_logger().info("Not safe Back")
                 self.lidar_saftey_msg.back = 1
                 self.lidar_saftey_msg.object = 1
+                self.safe = False
                 break
 
         for i in range(len(msg.ranges)):
@@ -121,6 +127,9 @@ class ScanSubscriberNode(Node):
                 distance4 = self.side_dist / np.sin(angle)
                 self.debug.ranges[i] = abs(distance4)
 
+        if self.safe:
+            self.lidar_saftey_msg = LidarSaftey()
+            
         self.lidar_saftey_pub.publish(self.lidar_saftey_msg)
         self.lidar_saftey_debug_pub.publish(self.debug)
         self.lidar_saftey_msg = LidarSaftey()
