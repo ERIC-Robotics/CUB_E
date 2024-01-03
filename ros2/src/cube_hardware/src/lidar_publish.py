@@ -67,9 +67,9 @@ class ScanAndPublishNode(Node):
         # Simply republish the received scan data with an updated timestamp
         self.newscan = scan_msg
         # Debug print to see the scan message's timestamp in seconds
-        print(scan_msg.header.stamp.sec)
-        # Update the timestamp to the current time
-        self.newscan.header.stamp = self.get_clock().now().to_msg()
+        # print(scan_msg.header.stamp.sec)
+        # # Update the timestamp to the current time
+        # self.newscan.header.stamp = self.get_clock().now().to_msg()
         # Publish the new scan data
         self.newscan_publisher.publish(self.newscan)
 

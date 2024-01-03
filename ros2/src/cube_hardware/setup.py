@@ -20,6 +20,7 @@ setup(
         srcpath + '.lidar_saftey',
         srcpath + '.lidar_min',
         srcpath + '.nav_feedback_sub',
+        srcpath + '.lidar_msg2string',
         srcpath + '.navigation_test',
         srcpath + '.transform'],
     data_files=[
@@ -42,6 +43,7 @@ setup(
             'lidarpub = src.lidar_publish:main',
             'transform = src.transform:main',
             'control = src.control:main',
+            'lidar_msg2str = src.lidar_msg2string:main',
             'nav_feedback_sub = src.nav_feedback_sub:main',
             'lidar_min = src.lidar_min:main',
             'lidar_saftey = src.lidar_saftey:main',
