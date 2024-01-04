@@ -1,4 +1,5 @@
 import rclpy
+import time
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from nav2_msgs.action import NavigateThroughPoses
@@ -21,18 +22,38 @@ class NavigateThroughPosesClient(Node):
         self.feedback_publisher_timer = self.create_timer(0.5, self.feedback_publisher_timer_pub)
         self.waypoints = []
         self.nav_status = Int64()
+        self.nav_status.data = 99
+        self.publish_green_2sec = False
+        self.waypoints_count = 0
+
+        self.previous_time = time.time()
+        self.now_time = time.time()
         self.published = False
+        self.set_prev_time = True
 
     def feedback_publisher_timer_pub(self):
-        self.feedback_publisher.publish(self.nav_status)
+        if self.publish_green_2sec:
+            green_msg = Int64()
+            green_msg.data = 1
+            self.feedback_publisher.publish(green_msg)
+            self.now_time = time.time()
+            if self.now_time - self.previous_time > 2:
+                self.publish_green_2sec = False
+                self.waypoints_count -= 1
+                print('Waypoint_count pub: ', self.waypoints_count)
+                self.set_prev_time = True
+        else:        
+            self.feedback_publisher.publish(self.nav_status)
 
     def goal_pose_callback(self, msg):
         self.waypoints.append(msg)
         print('Added to list')
+        self.waypoints_count += 1
 
     def send_goal(self, waypoints):
         goal_msg = NavigateThroughPoses.Goal()
         goal_msg.poses = waypoints
+        print('Waypoint_count: ', self.waypoints_count)
 
         self._action_client.wait_for_server()
         self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
@@ -43,7 +64,7 @@ class NavigateThroughPosesClient(Node):
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected :(')
             self.nav_status.data = 0
-            self.feedback_publisher.publish(self.nav_status)
+            # self.feedback_publisher.publish(self.nav_status)
             return
         
         self.get_logger().info('Goal accepted :)')
@@ -59,27 +80,40 @@ class NavigateThroughPosesClient(Node):
         if result.status == 4:
             print('Goal was successful!')
             self.nav_status.data = 1
-            self.feedback_publisher.publish(self.nav_status)
+            self.publish_green_2sec = True
+            self.previous_time = time.time()
+            # self.feedback_publisher.publish(self.nav_status)
             
         else:
             print(f'Goal failed with result code: {result}')
             self.nav_status.data = 0
-            self.feedback_publisher.publish(self.nav_status)
+            # self.feedback_publisher.publish(self.nav_status)
         
         self.published = False
+        self.nav_status.data = 99
         
         # Shutdown the node after receiving the result
         self.get_logger().info('Done...')
 
         rclpy.spin(self)
 
-        self.destroy_node()
-        rclpy.shutdown()
+        try:
+            self.destroy_node()
+            rclpy.shutdown()
+        except:
+            pass
 
     def feedback_callback(self, feedback_msg):
+        # print(feedback_msg.feedback.number_of_poses_remaining, end='\n\n\n')
+
+        if feedback_msg.feedback.number_of_poses_remaining != self.waypoints_count:
+            self.publish_green_2sec = True
+            if self.set_prev_time:
+                self.previous_time = time.time()
+                self.set_prev_time = False
         if not self.published:
             self.nav_status.data = 2
-            self.feedback_publisher.publish(self.nav_status)
+            # self.feedback_publisher.publish(self.nav_status)
             self.published = True
         pass
 
@@ -114,8 +148,6 @@ def read_input(action_client):
         if button_pressed:
             print("Button pressed, exiting loop.")
             break
-
-
 
 
 def main(args=None):
