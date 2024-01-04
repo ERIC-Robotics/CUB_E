@@ -54,15 +54,15 @@ int nav_status = 0;
 int lidar_saftey[5] = {0,0,0,0,0};
 
 
-int front_right[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-int front_left[9] = {11, 12, 13, 14, 15, 16, 17, 18, 19};
-int rear_left[8] = {20, 21, 22, 23, 24, 25, 26, 27};
-int rear_right[8] = {28, 29, 30, 31, 32, 33, 34, 35};
+const int front_right[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+const int front_left[9] = {11, 12, 13, 14, 15, 16, 17, 18, 19};
+const int rear_left[8] = {20, 21, 22, 23, 24, 25, 26, 27};
+const int rear_right[8] = {28, 29, 30, 31, 32, 33, 34, 35};
 
-int bottom_front[17] = {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
-int bottom_left[17] = {53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69};
-int bottom_back[17] = {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86};
-int bottom_right[17] = {87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103};
+const int bottom_front[17] = {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
+const int bottom_left[17] = {53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69};
+const int bottom_back[17] = {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86};
+const int bottom_right[17] = {87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103};
 
 long int Current_position_right;
 
@@ -91,58 +91,33 @@ void subscribe_right_command(const std_msgs::Float64& msg){
 
 void subscribe_software_estop(const std_msgs::Int64& msg){
   soft_es = msg.data;
-  // if(es_status == 0){
-  //   if(soft_es == 0){
-  //     if(nav_status == 2){
-  //       for (int  i = 0; i < NUM_LEDS; i++)
-  //       {
-  //         leds[i] = CRGB::Yellow;
-  //       }
-  //       FastLED.show();
-  //     }
-  //     else{      
-  //       for (int  i = 0; i < NUM_LEDS; i++)
-  //       {
-  //         leds[i] = CRGB::Red;
-  //       }
-  //       FastLED.show();
-  //     }
-  //   }
-  //   else{
-  //     for (int  i = 0; i < NUM_LEDS; i++)
-  //     {
-  //       leds[i] = CRGB::Green;
-  //     }
-  //     FastLED.show();
-  //   }
-  // }
 }
 
 void subscribe_nav_feedback(const std_msgs::Int64& msg){
   nav_status = msg.data;
-  // if(!es_status && !soft_es){
-  //   if(nav_status == 1){
-  //     for (int  i = 0; i < NUM_LEDS; i++)
-  //     {
-  //       leds[i] = CRGB::Red;
-  //     }
-  //     FastLED.show();
-  //   }
-  //   else if(nav_status == 2){
-  //     for (int  i = 0; i < NUM_LEDS; i++)
-  //     {
-  //       leds[i] = CRGB::Yellow;
-  //     }
-  //     FastLED.show();
-  //   }
-  //   else if(nav_status == 0){
-  //     for (int  i = 0; i < NUM_LEDS; i++)
-  //     {
-  //       leds[i] = CRGB::Green;
-  //     }
-  //     FastLED.show();
-  //   }
-  // }
+  if(!es_status && nav_status != 99){
+    if(nav_status == 1){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Red;
+      }
+      FastLED.show();
+    }
+    else if(nav_status == 2){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Yellow;
+      }
+      FastLED.show();
+    }
+    else if(nav_status == 0){
+      for (int  i = 0; i < NUM_LEDS; i++)
+      {
+        leds[i] = CRGB::Green;
+      }
+      FastLED.show();
+    }
+  }
 }
 
 void subscribe_cs(const std_msgs::Int64& msg){
@@ -153,24 +128,26 @@ void subscribe_cs(const std_msgs::Int64& msg){
     rmcs.Disable_Digital_Mode(slave_id_right,0);
     rmcs.Disable_Digital_Mode(slave_id_right,1);
   }
-  if (currentMillis - previousMillis >= interval){
-    previousMillis = currentMillis;
+  if(cs_status == 0 && es_status == 0){
+    if (currentMillis - previousMillis >= interval){
+      previousMillis = currentMillis;
 
-    green = !green
+      green = !green
 
-    if(green){
-      for (int  i = 0; i < NUM_LEDS; i++)
-      {
-        leds[i] = CRGB::Red; 
+      if(green){
+        for (int  i = 0; i < NUM_LEDS; i++)
+        {
+          leds[i] = CRGB::Red; 
+        }
+        FastLED.show();
       }
-      FastLED.show();
-    }
-    else{
-      for (int  i = 0; i < NUM_LEDS; i++)
-      {
-        leds[i] = CRGB::White; 
+      else{
+        for (int  i = 0; i < NUM_LEDS; i++)
+        {
+          leds[i] = CRGB::White; 
+        }
+        FastLED.show();
       }
-      FastLED.show();
     }
   }
 }
@@ -190,6 +167,61 @@ void subscribe_lidar_saftey(const std_msgs::Int64MultiArray& msg){
   for(int i = 0; i > 5; i++){
     lidar_saftey[i] = msg.data[i]
   }
+  if(es_status == 0 && cs_status == 1 && lidar_saftey[0] == 0 && nav_status == 99){
+    for (int  i = 0; i < NUM_LEDS; i++)
+    {
+      leds[i] = CRGB::White;
+    }
+    FastLED.show();
+  }
+  if(es_status == 0 && cs_status == 1 && lidar_saftey[0] == 1){
+    if(lidar_saftey[1] == 1){       // Front
+      for(int i = 0; i < 11; i++){
+        leds[front_right[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 9; i++){
+        leds[front_left[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 17; i++){
+        leds[bottom_front[i]] = CRGB::Green; 
+      }
+    }
+    if(lidar_saftey[2] == 1){    // Left
+      for(int i = 0; i < 8; i++){
+        leds[rear_left[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 9; i++){
+        leds[front_left[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 17; i++){
+        leds[bottom_left[i]] = CRGB::Green; 
+      }
+    }
+    if(lidar_saftey[3] == 1){    // Back
+      for(int i = 0; i < 8; i++){
+        leds[rear_left[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 8; i++){
+        leds[rear_right[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 17; i++){
+        leds[bottom_back[i]] = CRGB::Green; 
+      }
+    }
+    if(lidar_saftey[4] == 1){    // Right
+      for(int i = 0; i < 11; i++){
+        leds[front_right[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 8; i++){
+        leds[rear_right[i]] = CRGB::Green; 
+      }
+      for(int i = 0; i < 17; i++){
+        leds[bottom_right[i]] = CRGB::Green; 
+      }
+    }
+    FastLED.show();
+  }
+
 }
 
 ros::Subscriber<std_msgs::Float64> right_motor_sub("/rightmotor/command", subscribe_right_command);
