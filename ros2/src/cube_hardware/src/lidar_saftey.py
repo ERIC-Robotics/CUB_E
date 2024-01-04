@@ -91,7 +91,7 @@ class ScanSubscriberNode(Node):
                 self.lidar_saftey_msg.object = 1
                 break
         
-        for i in range(self.index_arr[3], 0):
+        for i in range(self.index_arr[3], len(msg.ranges)):
             angle = i * self.angle_inc
             distance1 = self.back_dist / np.cos(angle)
             if msg.ranges[i] < abs(distance1) and msg.ranges[i] != 0.0:
